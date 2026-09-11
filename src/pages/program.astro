@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PublicNav from '../components/PublicNav.astro';
+import PublicFooter from '../components/PublicFooter.astro';
+import { getContent } from '../lib/contentStore';
+const content = await getContent();
+const schedules = Array.isArray(content.schedule) ? content.schedule : [];
+const groups = [
+  { age: 'U-8', title: 'Fondasi & Kesenangan', text: 'Mengenal bola, koordinasi gerak, keberanian bermain, dan kebiasaan positif melalui aktivitas yang menyenangkan.' },
+  { age: 'U-10', title: 'Teknik & Kerja Sama', text: 'Mengembangkan kontrol bola, passing, dribbling, pemahaman ruang, dan komunikasi sederhana dalam tim.' },
+  { age: 'U-12+', title: 'Kompetisi & Perkembangan', text: 'Memperdalam pemahaman permainan, kebugaran, mental bertanding, dan tanggung jawab sebagai pemain.' },
+];
+---
+<Layout title="Program Latihan SSB Bhayangkara Junior 2018 | Kelompok Usia dan Jadwal">
+  <PublicNav active="program" />
+  <main id="main-content" class="program-page">
+    <section class="program-hero"><div class="pro-wrap"><span class="eyebrow">Program Pembinaan</span><h1>Latihan yang tepat<br /><span>untuk setiap tahap.</span></h1><p>Program kami dirancang untuk membuat anak aktif, percaya diri, dan berkembang sesuai usianya—dari fondasi hingga pengalaman kompetisi.</p><a class="primary" href="/pendaftaran">Daftarkan Anak <span>→</span></a></div></section>
+    <section class="pro-section"><div class="pro-wrap"><div class="section-intro"><span class="eyebrow">Kelompok Usia</span><h2>Satu lapangan,<br /><span>banyak cara bertumbuh.</span></h2></div><div class="group-grid">{groups.map((group, index) => <article><span class="group-number">0{index + 1}</span><strong>{group.age}</strong><h3>{group.title}</h3><p>{group.text}</p></article>)}</div></div></section>
+    <section class="schedule-section"><div class="pro-wrap two-col"><div><span class="eyebrow">Jadwal Latihan</span><h2>Temukan waktu<br /><span>bermain terbaik.</span></h2><p>Jadwal dapat berubah mengikuti agenda sekolah dan kompetisi. Hubungi admin untuk memastikan slot terbaru.</p><a class="secondary dark-btn" href="/kontak">Tanyakan Jadwal</a></div><div class="schedule-list">{schedules.length ? schedules.map((item: any) => <div><strong>{item.day}</strong><span>{item.info}</span></div>) : <div><strong>Jadwal tersedia</strong><span>Hubungi admin untuk informasi terbaru.</span></div>}</div></div></section>
+    <section class="steps-section"><div class="pro-wrap"><div class="section-intro"><span class="eyebrow">Alur Bergabung</span><h2>Semudah <span>tiga langkah.</span></h2></div><div class="steps">{['Isi formulir pendaftaran', 'Tim kami melakukan verifikasi', 'Mulai latihan dan bertumbuh bersama'].map((step, i) => <div><b>0{i + 1}</b><span>{step}</span></div>)}</div></div></section>
+  </main>
+  <PublicFooter />
+</Layout>
+<style>
+.program-page{background:#f4f8f5;color:#123126}.pro-wrap{width:min(1180px,calc(100% - 36px));margin:auto}.program-hero{padding:110px 0 100px;background:linear-gradient(120deg,#032b1d,#075d39);color:#fff}.eyebrow{color:#b78b15;font-size:12px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.program-hero .eyebrow{color:#ffd84f}.program-hero h1{font-size:clamp(48px,7vw,86px);line-height:.95;letter-spacing:-.06em;margin:18px 0}.program-hero h1 span,h2 span{color:#ffd84f}.program-hero p{max-width:650px;color:#d5e5dc;font-size:19px;line-height:1.65;margin-bottom:28px}.primary,.secondary{display:inline-flex;gap:10px;align-items:center;padding:14px 20px;border-radius:999px;font-weight:900}.primary{background:#f4c52d;color:#052217}.secondary{border:1px solid #b78b15;color:#123126}.dark-btn{color:#fff;border-color:#ffd84f}.pro-section,.steps-section{padding:95px 0}.section-intro{max-width:680px}.section-intro h2,.two-col h2{font-size:clamp(36px,5vw,60px);line-height:.97;letter-spacing:-.05em;margin:12px 0 20px}.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:45px}.group-grid article{padding:28px;min-height:270px;border-radius:22px;background:#fff;border:1px solid #d5e5dc}.group-number{display:block;color:#b78b15;font-weight:900;margin-bottom:38px}.group-grid strong{font-size:36px;color:#075d39}.group-grid h3{font-size:22px;margin:10px 0}.group-grid p,.two-col p{color:#587066;line-height:1.7}.schedule-section{padding:90px 0;background:#032b1d;color:#fff}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:70px}.schedule-section .eyebrow{color:#ffd84f}.schedule-section p{color:#bcd0c5}.schedule-list{display:grid;gap:12px}.schedule-list div{display:flex;justify-content:space-between;gap:20px;padding:20px;border:1px solid rgba(255,216,79,.28);border-radius:15px;background:rgba(255,255,255,.05)}.schedule-list strong{color:#ffd84f}.schedule-list span{color:#c3d6cc;text-align:right}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}.steps div{display:flex;align-items:center;gap:18px;padding:24px;border-top:2px solid #b78b15;font-weight:900}.steps b{color:#b78b15;font-size:28px}.steps span{font-size:18px}@media(max-width:760px){.group-grid,.steps,.two-col{grid-template-columns:1fr;gap:16px}.two-col{gap:38px}.schedule-list div{display:block}.schedule-list span{display:block;text-align:left;margin-top:8px}}
+</style>

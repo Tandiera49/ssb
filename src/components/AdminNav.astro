@@ -1,0 +1,493 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+  <div class="admin-brand">
+    <div class="admin-logo">BJ</div>
+
+    <div>
+      <strong>SSB BHAYANGKARA</strong>
+      <span>JUNIOR 2018</span>
+    </div>
+  </div>
+
+  <div class="admin-account">
+    <div class="account-avatar">A</div>
+    <div>
+      <strong>Administrator</strong>
+      <small>Admin SSB</small>
+    </div>
+  </div>
+
+  <nav class="admin-nav">
+
+    <a
+      href="/admin"
+      class:list={[{ active: currentPath === '/admin' }]}
+    >
+      <span>⌂</span>
+      <div>
+        <strong>Dashboard</strong>
+        <small>Ringkasan sistem</small>
+      </div>
+    </a>
+
+    <a
+      href="/admin/pendaftaran"
+      class:list={[
+        { active: currentPath.startsWith('/admin/pendaftaran') }
+      ]}
+    >
+      <span>▣</span>
+      <div>
+        <strong>Pendaftaran</strong>
+        <small>Data calon peserta</small>
+      </div>
+    </a>
+
+    <a
+      href="/admin/content"
+      class:list={[
+        { active: currentPath.startsWith('/admin/content') }
+      ]}
+    >
+      <span>◈</span>
+      <div>
+        <strong>Konten Website</strong>
+        <small>Hero, galeri & informasi</small>
+      </div>
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-label">MANAJEMEN</div>
+
+    <a
+      href="/admin/users"
+      class:list={[{ active: currentPath.startsWith('/admin/users') }]}
+    >
+      <span>♙</span>
+      <div>
+        <strong>Manajemen Akun</strong>
+        <small>Pelatih, orang tua & siswa</small>
+      </div>
+      
+    </a>
+
+    <a
+      href="/admin/content#schedule"
+      class:list={[{ active: currentPath === '/admin/content' }]}
+    >
+      <span>⚽</span>
+      <div>
+        <strong>Jadwal & Turnamen</strong>
+        <small>Latihan dan pertandingan</small>
+      </div>
+      
+    </a>
+
+    <a href="/admin/content#announcements">
+      <span>▤</span>
+      <div>
+        <strong>Pengumuman</strong>
+        <small>Informasi untuk anggota</small>
+      </div>
+      
+    </a>
+
+    <a
+      href="/admin/finance"
+      class:list={[{ active: currentPath.startsWith('/admin/finance') }]}
+    >
+      <span>Rp</span>
+      <div>
+        <strong>Keuangan</strong>
+        <small>Tagihan & laporan pembayaran</small>
+      </div>
+    </a>
+
+  </nav>
+
+  <div class="admin-sidebar-bottom">
+
+    <a href="/" class="back-home">
+      <span>←</span>
+      Kembali ke Website
+    </a>
+
+    <button
+      type="button"
+      id="adminLogout"
+      class="logout-button"
+    >
+      <span>↪</span>
+      Keluar
+    </button>
+
+  </div>
+
+</aside>
+
+<button
+  type="button"
+  id="adminMenuButton"
+  class="admin-menu-button"
+  aria-label="Buka menu admin"
+  aria-expanded="false"
+>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
+<style>
+.admin-sidebar {
+  position: fixed;
+  z-index: 1000;
+  inset: 0 auto 0 0;
+  width: 278px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  background:
+    linear-gradient(
+      180deg,
+      #03281a 0%,
+      #021d14 100%
+    );
+  border-right: 1px solid rgba(255,210,26,.14);
+  box-shadow: 20px 0 60px rgba(0,0,0,.18);
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.admin-logo {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #ffd21a;
+  color: #063522;
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.admin-brand strong,
+.admin-brand span {
+  display: block;
+}
+
+.admin-brand strong {
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: .03em;
+}
+
+.admin-brand span {
+  margin-top: 3px;
+  color: #ffd21a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.admin-account {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 18px 4px;
+  padding: 12px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.045);
+}
+
+.account-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: rgba(255,210,26,.14);
+  color: #ffd21a;
+  font-weight: 900;
+}
+
+.admin-account strong,
+.admin-account small {
+  display: block;
+}
+
+.admin-account strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.admin-account small {
+  margin-top: 3px;
+  color: rgba(255,255,255,.48);
+  font-size: 11px;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+}
+
+.admin-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 9px 11px;
+  border-radius: 13px;
+  color: rgba(255,255,255,.62);
+  text-decoration: none;
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.admin-nav a > span {
+  width: 30px;
+  flex: 0 0 30px;
+  text-align: center;
+  color: rgba(255,255,255,.42);
+  font-size: 18px;
+}
+
+.admin-nav a strong,
+.admin-nav a small {
+  display: block;
+}
+
+.admin-nav a strong {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-nav a small {
+  margin-top: 3px;
+  color: rgba(255,255,255,.38);
+  font-size: 10px;
+}
+
+.admin-nav a:hover {
+  background: rgba(255,255,255,.055);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.admin-nav a.active {
+  background: rgba(255,210,26,.11);
+  color: #ffd21a;
+}
+
+.admin-nav a.active > span {
+  color: #ffd21a;
+}
+
+.admin-nav a.active small {
+  color: rgba(255,210,26,.62);
+}
+
+.nav-divider {
+  height: 1px;
+  margin: 14px 8px 10px;
+  background: rgba(255,255,255,.07);
+}
+
+.nav-label {
+  padding: 0 11px 7px;
+  color: rgba(255,255,255,.28);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.admin-sidebar-bottom {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.back-home,
+.logout-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 11px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back-home {
+  color: rgba(255,255,255,.55);
+}
+
+.back-home:hover {
+  color: #fff;
+  background: rgba(255,255,255,.04);
+}
+
+.logout-button {
+  margin-top: 5px;
+  border: 1px solid rgba(255,100,100,.12);
+  background: rgba(255,80,80,.045);
+  color: #ff9a9a;
+}
+
+.logout-button:hover {
+  background: rgba(255,80,80,.09);
+}
+
+.admin-menu-button,
+.admin-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .admin-sidebar {
+    transform: translateX(-105%);
+    transition: transform .25s ease;
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-backdrop {
+    position: fixed;
+    z-index: 999;
+    inset: 0;
+    background: rgba(0,0,0,.58);
+  }
+
+  .admin-sidebar-backdrop.show {
+    display: block;
+  }
+
+  .admin-menu-button {
+    position: fixed;
+    z-index: 1100;
+    top: 16px;
+    left: 16px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 12px;
+    border: 1px solid rgba(255,210,26,.2);
+    border-radius: 12px;
+    background: #063522;
+    box-shadow: 0 8px 25px rgba(0,0,0,.25);
+    cursor: pointer;
+  }
+
+  .admin-menu-button span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: #ffd21a;
+    border-radius: 2px;
+  }
+}
+</style>
+
+<script is:inline>
+(() => {
+  const sidebar =
+    document.getElementById('adminSidebar');
+
+  const menu =
+    document.getElementById('adminMenuButton');
+
+  const backdrop =
+    document.getElementById('adminSidebarBackdrop');
+
+  const logout =
+    document.getElementById('adminLogout');
+
+  const closeMenu = () => {
+    sidebar?.classList.remove('open');
+    backdrop?.classList.remove('show');
+    menu?.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+  };
+
+  menu?.addEventListener('click', () => {
+    const open =
+      sidebar?.classList.toggle('open') || false;
+
+    backdrop?.classList.toggle(
+      'show',
+      open
+    );
+
+    menu.setAttribute(
+      'aria-expanded',
+      String(open)
+    );
+  });
+
+  backdrop?.addEventListener(
+    'click',
+    closeMenu
+  );
+
+  document
+    .querySelectorAll('.admin-nav a')
+    .forEach((link) => {
+      link.addEventListener(
+        'click',
+        closeMenu
+      );
+    });
+
+  logout?.addEventListener(
+    'click',
+    async () => {
+      logout.disabled = true;
+      logout.textContent = 'Keluar...';
+
+      try {
+        await fetch(
+          '/api/auth/logout',
+          {
+            method: 'POST',
+            credentials: 'include',
+            cache: 'no-store',
+          }
+        );
+      } finally {
+        window.location.href = '/login';
+      }
+    }
+  );
+})();
+</script>

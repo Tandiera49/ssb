@@ -1,0 +1,1001 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminNav from '../../components/AdminNav.astro';
+import { getUserBySession } from '../../lib/authStore';
+
+export const prerender = false;
+
+const sessionToken = Astro.cookies.get('ssb_session')?.value || '';
+const currentUser = sessionToken
+  ? await getUserBySession(sessionToken)
+  : null;
+
+if (!currentUser || currentUser.role !== 'admin') {
+  return Astro.redirect(
+    '/login?redirect=' +
+      encodeURIComponent(Astro.url.pathname)
+  );
+}
+---
+
+<Layout
+  title="Manajemen Akun - Admin SSB Bhayangkara Junior 2018"
+>
+  <AdminNav />
+
+  <main class="account-page">
+    <section class="account-hero">
+      <div>
+        <span class="eyebrow">ADMINISTRASI</span>
+        <h1>Manajemen Akun</h1>
+        <p>
+          Kelola akun administrator, pelatih, orang tua,
+          dan siswa dari satu tempat.
+        </p>
+      </div>
+
+      <button id="openCreate" class="primary-btn">
+        + Tambah Akun
+      </button>
+    </section>
+
+    <section class="account-panel">
+      <div class="panel-head">
+        <div>
+          <h2>Daftar Pengguna</h2>
+          <p id="userCount">Memuat data...</p>
+        </div>
+
+        <button id="refreshUsers" class="secondary-btn">
+          Muat Ulang
+        </button>
+      </div>
+
+      <div id="message" class="message hidden"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="userRows">
+            <tr>
+              <td colspan="5" class="loading">
+                Memuat daftar akun...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="editModal" class="modal hidden">
+  <div class="modal-backdrop" data-edit-close></div>
+  <div class="modal-card">
+    <button class="modal-close" data-edit-close aria-label="Tutup">×</button>
+    <span class="eyebrow">EDIT AKUN</span>
+    <h2>Edit Akun</h2>
+    <p class="modal-description">
+      Ubah nama, username, atau role akun.
+    </p>
+
+    <form id="editForm">
+      <input type="hidden" name="id" />
+
+      <label>
+        Nama Lengkap
+        <input name="name" type="text" required autocomplete="name" />
+      </label>
+
+      <label>
+        Username
+        <input name="username" type="text" required autocomplete="username" />
+      </label>
+
+      <label>
+        Role
+        <select name="role" required>
+          <option value="admin">Administrator</option>
+          <option value="pelatih">Pelatih</option>
+          <option value="orang_tua">Orang Tua</option>
+          <option value="siswa">Siswa</option>
+        </select>
+      </label>
+
+      <label>
+        Password Baru
+        <div class="password-field">
+          <input
+            name="password"
+            type="password"
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="Kosongkan jika tidak ingin mengganti"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            data-password-toggle
+            aria-label="Tampilkan password"
+          >👁️</button>
+        </div>
+        <small>Minimal 8 karakter jika ingin mengganti password.</small>
+      </label>
+
+      <button class="primary-btn submit-btn" type="submit">
+        Simpan Perubahan
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-backdrop" data-close></div>
+
+    <div class="modal-card">
+      <button class="modal-close" data-close aria-label="Tutup">
+        ×
+      </button>
+
+      <span class="eyebrow">AKUN BARU</span>
+      <h2>Tambah Akun</h2>
+      <p class="modal-description">
+        Password hanya digunakan saat pembuatan akun dan
+        tidak akan ditampilkan kembali.
+      </p>
+
+      <form id="createForm">
+        <label>
+          Nama Lengkap
+          <input
+            name="name"
+            type="text"
+            required
+            autocomplete="name"
+          />
+        </label>
+
+        <label>
+          Username
+          <input
+            name="username"
+            type="text"
+            required
+            autocomplete="username"
+          />
+        </label>
+
+        <label>
+          Role
+          <select name="role" required>
+            <option value="admin">Administrator</option>
+            <option value="pelatih">Pelatih</option>
+          </select>
+          <small>Akun siswa dan orang tua dibuat dari pendaftaran yang diterima.</small>
+        </label>
+
+        <label>
+          Password
+          <div class="password-field">
+            <input
+              name="password"
+              type="password"
+              minlength="8"
+              required
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-password-toggle
+              aria-label="Tampilkan password"
+            >👁️</button>
+          </div>
+          <small>Minimal 8 karakter.</small>
+        </label>
+
+        <button class="primary-btn submit-btn" type="submit">
+          Buat Akun
+        </button>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .account-page {
+    min-height: 100vh;
+    padding: 120px 24px 60px;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(216, 168, 72, 0.08),
+        transparent 35%
+      ),
+      #02150d;
+    color: #f4f7f4;
+  }
+
+  .account-hero,
+  .account-panel {
+    width: min(1180px, 100%);
+    margin-inline: auto;
+  }
+
+  .account-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    color: #e0b94f;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+
+  h1 {
+    margin: 8px 0;
+    font-size: clamp(32px, 5vw, 52px);
+  }
+
+  .account-hero p,
+  .modal-description {
+    color: #aebdb5;
+    margin: 0;
+  }
+
+  .password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-field input {
+    width: 100%;
+    padding-right: 52px;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 8px;
+    border: 0;
+    background: transparent;
+    color: #f4f7f4;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+  }
+
+  .danger-btn {
+    border-color: rgba(220, 80, 80, 0.45) !important;
+    color: #ffd5d5 !important;
+  }
+
+  .action-btn:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+
+  .action-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .action-btn {
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .primary-btn {
+    background: #e0b94f;
+    color: #102417;
+  }
+
+  .secondary-btn,
+  .action-btn {
+    background: #0b3d29;
+    color: #f4f7f4;
+    border: 1px solid rgba(224, 185, 79, 0.25);
+  }
+
+  .account-panel {
+    padding: 24px;
+    border: 1px solid rgba(224, 185, 79, 0.16);
+    border-radius: 22px;
+    background: rgba(5, 42, 28, 0.88);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel-head h2 {
+    margin: 0 0 5px;
+  }
+
+  .panel-head p {
+    margin: 0;
+    color: #9eb0a7;
+    font-size: 14px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+  }
+
+  th,
+  td {
+    padding: 16px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  th {
+    color: #d8e1dc;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  td {
+    color: #f0f4f1;
+  }
+
+  .role {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(224, 185, 79, 0.12);
+    color: #e0b94f;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .status.active {
+    color: #78d69b;
+  }
+
+  .status.inactive {
+    color: #df8d8d;
+  }
+
+  .loading {
+    text-align: center;
+    color: #9eb0a7;
+    padding: 35px;
+  }
+
+  .message {
+    padding: 12px 15px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    background: rgba(224, 185, 79, 0.1);
+    color: #e0b94f;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.72);
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-card {
+    position: relative;
+    width: min(520px, 100%);
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 30px;
+    margin: auto 0;
+    border-radius: 22px;
+    background: #063b27;
+    border: 1px solid rgba(224,185,79,.22);
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+  }
+
+  .modal-card h2 {
+    margin: 8px 0;
+  }
+
+  .modal-close {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    border: 0;
+    background: transparent;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+  }
+
+  form {
+    display: grid;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  label {
+    display: grid;
+    gap: 7px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  input,
+  select {
+    width: 100%;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    padding: 13px 14px;
+    background: #02271a;
+    color: white;
+    outline: none;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: #e0b94f;
+  }
+
+  small {
+    color: #9eb0a7;
+    font-weight: 400;
+  }
+
+  .submit-btn {
+    margin-top: 5px;
+  }
+
+  @media (max-width: 700px) {
+    .account-page {
+      padding-inline: 15px;
+    }
+
+    .account-hero,
+    .panel-head {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+    }
+
+    .account-panel {
+      padding: 16px;
+    }
+  }
+</style>
+
+<script>
+  const rows = document.getElementById('userRows');
+  const count = document.getElementById('userCount');
+  const message = document.getElementById('message');
+  const modal = document.getElementById('modal');
+  const openCreate = document.getElementById('openCreate') as HTMLButtonElement | null;
+  const createForm = document.getElementById('createForm') as HTMLFormElement | null;
+  const refresh = document.getElementById('refreshUsers') as HTMLButtonElement | null;
+
+  const roleLabels = {
+    admin: 'Administrator',
+    pelatih: 'Pelatih',
+    orang_tua: 'Orang Tua',
+    siswa: 'Siswa',
+  };
+
+  function showMessage(text: string) {
+    message.textContent = text;
+    message.classList.remove('hidden');
+
+    setTimeout(() => {
+      message.classList.add('hidden');
+    }, 3500);
+  }
+
+  function escapeHtml(value: unknown) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  async function loadUsers() {
+    rows.innerHTML = `
+      <tr>
+        <td colspan="5" class="loading">
+          Memuat daftar akun...
+        </td>
+      </tr>
+    `;
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        credentials: 'same-origin',
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || 'Gagal memuat akun.'
+        );
+      }
+
+      const users: Array<{
+        id: string;
+        name: string;
+        username: string;
+        role: string;
+        active: boolean;
+      }> = result.data || [];
+
+      usersCache.length = 0;
+      usersCache.push(...users);
+
+      count.textContent =
+        `${users.length} akun terdaftar`;
+
+      if (!users.length) {
+        rows.innerHTML = `
+          <tr>
+            <td colspan="5" class="loading">
+              Belum ada akun.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      rows.innerHTML = users.map((user) => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(user.name)}</strong>
+          </td>
+          <td>${escapeHtml(user.username)}</td>
+          <td>
+            <span class="role">
+              ${escapeHtml(
+                roleLabels[user.role] || user.role
+              )}
+            </span>
+          </td>
+          <td>
+            <span class="status ${
+              user.active ? 'active' : 'inactive'
+            }">
+              ${user.active ? '● Aktif' : '● Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-group">
+              <button
+                class="action-btn edit-btn"
+                data-edit-user-id="${escapeHtml(user.id)}"
+              >
+                Edit
+              </button>
+              <button
+                class="action-btn"
+                data-user-id="${escapeHtml(user.id)}"
+                data-active="${user.active}"
+              >
+                ${user.active ? 'Nonaktifkan' : 'Aktifkan'}
+              </button>
+              <button
+                class="action-btn danger-btn"
+                data-delete-user-id="${escapeHtml(user.id)}"
+              >
+                Hapus
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      document
+        .querySelectorAll<HTMLButtonElement>('[data-user-id]')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            toggleUser(
+              button.dataset.userId,
+              button.dataset.active === 'true'
+            );
+          });
+        });
+
+      rows
+        .querySelectorAll<HTMLButtonElement>('[data-edit-user-id]')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            const userId = button.dataset.editUserId;
+            const user = usersCache.find((item) => item.id === userId);
+
+            if (user) {
+              openEditUser(user);
+            }
+          });
+        });
+    } catch (error) {
+      rows.innerHTML = `
+        <tr>
+          <td colspan="5" class="loading">
+            Gagal memuat daftar akun.
+          </td>
+        </tr>
+      `;
+
+      showMessage(
+        error instanceof Error
+          ? error.message
+          : 'Gagal memuat akun.'
+      );
+    }
+  }
+
+  const editModal =
+    document.getElementById('editModal') as HTMLDivElement | null;
+  const editForm =
+    document.getElementById('editForm') as HTMLFormElement | null;
+
+  const usersCache: Array<{
+    id: string;
+    name: string;
+    username: string;
+    role: string;
+    active: boolean;
+  }> = [];
+
+  function openEditUser(user: {
+    id: string;
+    name: string;
+    username: string;
+    role: string;
+  }) {
+    if (!editModal || !editForm) return;
+
+    const idInput =
+      editForm.elements.namedItem('id') as HTMLInputElement | null;
+    const nameInput =
+      editForm.elements.namedItem('name') as HTMLInputElement | null;
+    const usernameInput =
+      editForm.elements.namedItem('username') as HTMLInputElement | null;
+    const roleInput =
+      editForm.elements.namedItem('role') as HTMLSelectElement | null;
+
+    if (idInput) idInput.value = user.id;
+    if (nameInput) nameInput.value = user.name;
+    if (usernameInput) usernameInput.value = user.username;
+    if (roleInput) roleInput.value = user.role;
+
+    editModal.classList.remove('hidden');
+  }
+
+  function closeEditModal() {
+    editModal?.classList.add('hidden');
+  }
+
+  editModal
+    ?.querySelectorAll('[data-edit-close]')
+    .forEach((element) => {
+      element.addEventListener('click', closeEditModal);
+    });
+
+  editForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(editForm);
+    const submitButton =
+      editForm.querySelector<HTMLButtonElement>(
+        'button[type="submit"]'
+      );
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Menyimpan...';
+    }
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: formData.get('id'),
+          name: formData.get('name'),
+          username: formData.get('username'),
+          role: formData.get('role'),
+          password: formData.get('password'),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || 'Gagal mengubah akun.'
+        );
+      }
+
+      const passwordInput =
+        editForm.elements.namedItem('password') as HTMLInputElement | null;
+
+      if (passwordInput) passwordInput.value = '';
+
+      closeEditModal();
+      showMessage('Akun berhasil diperbarui.');
+      await loadUsers();
+    } catch (error) {
+      showMessage(
+        error instanceof Error
+          ? error.message
+          : 'Gagal mengubah akun.'
+      );
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Simpan Perubahan';
+      }
+    }
+  });
+
+  async function toggleUser(id: string, currentActive: boolean) {
+    const nextActive = !currentActive;
+
+    try {
+      const response = await fetch(
+        '/api/admin/users',
+        {
+          method: 'PATCH',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id,
+            active: nextActive,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message ||
+          'Gagal mengubah status akun.'
+        );
+      }
+
+      showMessage(
+        nextActive
+          ? 'Akun berhasil diaktifkan.'
+          : 'Akun berhasil dinonaktifkan.'
+      );
+
+      await loadUsers();
+    } catch (error) {
+      showMessage(
+        error instanceof Error
+          ? error.message
+          : 'Gagal mengubah status akun.'
+      );
+    }
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+  openCreate?.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+  });
+
+  modal
+    .querySelectorAll('[data-close]')
+    .forEach((element) => {
+      element.addEventListener(
+        'click',
+        closeModal
+      );
+    });
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-delete-user-id]')
+    .forEach((button) => {
+      button.addEventListener('click', async () => {
+        const userId = button.dataset.deleteUserId;
+        if (!userId) return;
+
+        const user = usersCache.find((item) => item.id === userId);
+        if (!user) return;
+
+        const confirmed = window.confirm(
+          `Hapus akun "${user.name}" (${user.username})?\n\nTindakan ini tidak dapat dibatalkan.`
+        );
+
+        if (!confirmed) return;
+
+        button.disabled = true;
+        button.textContent = 'Menghapus...';
+
+        try {
+          const response = await fetch('/api/admin/users', {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userId }),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(
+              result.message || 'Gagal menghapus akun.'
+            );
+          }
+
+          showMessage('Akun berhasil dihapus.');
+          await loadUsers();
+        } catch (error) {
+          showMessage(
+            error instanceof Error
+              ? error.message
+              : 'Gagal menghapus akun.'
+          );
+
+          button.disabled = false;
+          button.textContent = 'Hapus';
+        }
+      });
+    });
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-password-toggle]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        const wrapper = button.parentElement;
+        const input =
+          wrapper?.querySelector<HTMLInputElement>('input[type="password"], input[type="text"]');
+
+        if (!input) return;
+
+        const visible = input.type === 'text';
+        input.type = visible ? 'password' : 'text';
+        button.textContent = visible ? '👁️' : '🙈';
+        button.setAttribute(
+          'aria-label',
+          visible ? 'Tampilkan password' : 'Sembunyikan password'
+        );
+      });
+    });
+
+  refresh?.addEventListener(
+    'click',
+    loadUsers
+  );
+
+  createForm?.addEventListener(
+    'submit',
+    async (event) => {
+      event.preventDefault();
+
+      const form = new FormData(createForm);
+
+      const button =
+        createForm.querySelector<HTMLButtonElement>(
+          'button[type="submit"]'
+        );
+
+      button.disabled = true;
+      button.textContent = 'Menyimpan...';
+
+      try {
+        const response = await fetch(
+          '/api/admin/users',
+          {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: form.get('name'),
+              username: form.get('username'),
+              role: form.get('role'),
+              password: form.get('password'),
+            }),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message ||
+            'Gagal membuat akun.'
+          );
+        }
+
+        createForm.reset();
+        closeModal();
+
+        showMessage('Akun berhasil dibuat.');
+
+        await loadUsers();
+      } catch (error) {
+        showMessage(
+          error instanceof Error
+            ? error.message
+            : 'Gagal membuat akun.'
+        );
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Buat Akun';
+      }
+    }
+  );
+
+  loadUsers();
+</script>

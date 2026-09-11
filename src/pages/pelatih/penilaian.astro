@@ -1,0 +1,1224 @@
+---
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Penilaian Pemain · Pelatih</title>
+
+  <style>
+    :root {
+      --green: #073b2a;
+      --green2: #0b5139;
+      --gold: #d6ad3a;
+      --white: #fff;
+      --muted: #aebbb5;
+      --line: rgba(255,255,255,.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(214,173,58,.12), transparent 35%),
+        linear-gradient(135deg, var(--green), #031e16);
+      color: var(--white);
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 28px));
+      margin: auto;
+      padding: 24px 0 50px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 45px;
+    }
+
+    .brand {
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .back {
+      color: var(--gold);
+      border: 1px solid rgba(214,173,58,.4);
+      background: transparent;
+      border-radius: 8px;
+      padding: 9px 13px;
+      text-decoration: none;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(34px, 7vw, 60px);
+      line-height: 1;
+    }
+
+    .intro {
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      margin: 0 0 20px;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: white;
+      border-radius: 9px;
+      padding: 12px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .score label {
+      text-align: center;
+    }
+
+    .save {
+      width: 100%;
+      border: 0;
+      background: var(--gold);
+      color: #152719;
+      border-radius: 9px;
+      padding: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 12px;
+      color: var(--gold);
+      min-height: 20px;
+      font-size: 13px;
+    }
+
+    .history {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 15px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item strong {
+      color: var(--white);
+    }
+
+    .period {
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .mini {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .delete {
+      border: 1px solid rgba(255,80,80,.35);
+      background: transparent;
+      color: #ffaaaa;
+      border-radius: 6px;
+      padding: 5px 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid,
+      .scores {
+        grid-template-columns: 1fr;
+      }
+
+      .item-head {
+        align-items: flex-start;
+      }
+
+      .panel {
+        padding: 18px;
+        border-radius: 14px;
+      }
+
+      .panel h2 {
+        margin-bottom: 16px;
+      }
+
+      .form-grid,
+      .scores {
+        gap: 13px;
+      }
+
+      .save {
+        min-height: 46px;
+      }
+    }
+  
+    .player-picker {
+      position: relative;
+    }
+
+    .player-picker input[type="search"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .player-results {
+      display: none;
+      position: absolute;
+      z-index: 100;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      max-height: 280px;
+      overflow-y: auto;
+      background: #063f2d;
+      border: 1px solid rgba(230, 180, 20, .35);
+      border-radius: 12px;
+      box-shadow: 0 16px 36px rgba(0,0,0,.35);
+    }
+
+    .player-results.show {
+      display: block;
+    }
+
+    .player-result {
+      display: block;
+      width: 100%;
+      padding: 13px 15px;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: transparent;
+      color: #fff;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .player-result:hover {
+      background: rgba(230,180,20,.14);
+    }
+
+    .picker-empty {
+      padding: 13px 15px;
+      color: rgba(255,255,255,.65);
+      font-size: .88rem;
+    }
+
+    .picker-help {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255,255,255,.55);
+      font-size: .75rem;
+    }
+
+
+/* ===== UI MOBILE/DESKTOP POLISH ===== */
+.panel {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.form-grid,
+.scores {
+  width: 100%;
+}
+
+.form-grid > *,
+.scores > *,
+.player-picker {
+  min-width: 0;
+}
+
+input,
+select,
+textarea {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.player-picker input[type="search"] {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .panel {
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+  }
+
+  .panel h2 {
+    font-size: 21px;
+    line-height: 1.2;
+    margin-bottom: 18px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .scores {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  label {
+    gap: 7px;
+    font-size: 13px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 11px;
+  }
+
+  textarea {
+    min-height: 125px;
+  }
+
+  .score label {
+    text-align: left;
+  }
+
+  .save {
+    min-height: 52px;
+    border-radius: 11px;
+    font-size: 16px;
+  }
+
+  .history {
+    gap: 12px;
+  }
+
+  .item {
+    padding: 16px;
+    border-radius: 13px;
+  }
+
+  .item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .delete {
+    flex-shrink: 0;
+  }
+
+  .player-picker {
+    width: 100%;
+  }
+
+  .player-picker input[type="search"] {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .player-results {
+    max-height: 240px;
+    border-radius: 11px;
+  }
+}
+
+
+
+/* ===== MOBILE UI REFINEMENT ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.panel {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.panel > * {
+  max-width: 100%;
+}
+
+.form-grid,
+.scores {
+  min-width: 0;
+}
+
+.form-grid > *,
+.scores > *,
+.player-picker {
+  min-width: 0;
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .panel {
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+  }
+
+  .panel h2 {
+    font-size: 21px;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Nilai tetap ringkas di mobile */
+  .scores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .score {
+    min-width: 0;
+  }
+
+  .score label {
+    text-align: left;
+  }
+
+  .score input {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  textarea {
+    min-height: 120px;
+    line-height: 1.5;
+  }
+
+  .save {
+    min-height: 50px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .history {
+    gap: 12px;
+  }
+
+  .item {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .item-head {
+    min-width: 0;
+  }
+
+  .item strong,
+  .period {
+    overflow-wrap: anywhere;
+  }
+
+  .player-picker {
+    width: 100%;
+  }
+
+  .player-results {
+    max-height: 240px;
+    border-radius: 10px;
+  }
+}
+
+
+
+/* ===== MOBILE PROFESSIONAL SPACING ===== */
+@media (max-width: 700px) {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .wrap {
+    width: min(100% - 32px, 1180px) !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section {
+    margin-top: 44px !important;
+  }
+
+  .section-head {
+    margin-bottom: 16px !important;
+  }
+
+  .section-head h2 {
+    margin: 0 0 7px !important;
+    line-height: 1.15 !important;
+  }
+
+  .section-head p {
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Jadwal */
+  .panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+  }
+
+  .schedule-row {
+    display: block !important;
+    padding: 18px 20px !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+
+  .schedule-row + .schedule-row {
+    border-top: 1px solid rgba(255,255,255,.10) !important;
+  }
+
+  .schedule-row strong {
+    display: block !important;
+    margin: 0 0 6px !important;
+    font-size: 17px !important;
+    line-height: 1.3 !important;
+  }
+
+  .schedule-row > div {
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .schedule-row b,
+  .schedule-row small,
+  .schedule-row span {
+    display: block !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.45 !important;
+  }
+
+  .schedule-row small {
+    margin-top: 3px !important;
+  }
+
+  /* Absensi */
+  .attendance-form {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    padding: 20px !important;
+  }
+
+  .attendance-form > div {
+    min-width: 0 !important;
+  }
+
+  .attendance-form label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    line-height: 1.25 !important;
+  }
+
+  .attendance-form input,
+  .attendance-form select,
+  .attendance-form textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  .attendance-form textarea {
+    min-height: 100px !important;
+    resize: vertical !important;
+  }
+
+  .attendance-player-picker {
+    min-width: 0 !important;
+  }
+
+  .attendance-player-picker .player-results {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #saveAttendance {
+    width: 100% !important;
+    min-height: 50px !important;
+    margin-top: 2px !important;
+  }
+
+  /* Tabel */
+  .players {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 18px !important;
+  }
+
+  .players table {
+    min-width: 620px !important;
+  }
+
+  .players th,
+  .players td {
+    padding: 13px 14px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Promo Penilaian */
+  .evaluation-entry {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 20px !important;
+    padding: 22px !important;
+    min-width: 0 !important;
+  }
+
+  .evaluation-entry > div {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .evaluation-entry h3 {
+    margin: 0 0 10px !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .evaluation-entry p {
+    margin: 0 !important;
+    line-height: 1.65 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .evaluation-btn {
+    width: 100% !important;
+    min-height: 52px !important;
+    margin: 0 !important;
+    padding: 13px 18px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+  }
+}
+
+
+
+/* ===== PLAYER PICKER PROFESSIONAL ===== */
+.player-picker {
+  position: relative;
+  width: 100%;
+}
+
+.player-picker input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.player-results {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 6px;
+  box-sizing: border-box;
+  background: #063f2d;
+  border: 1px solid rgba(230,180,20,.35);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.38);
+}
+
+.player-results.show {
+  display: block;
+}
+
+.player-result {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 64px !important;
+  box-sizing: border-box !important;
+  padding: 11px 13px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.09) !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: #fff !important;
+  text-align: left !important;
+  cursor: pointer;
+  line-height: 1.3 !important;
+}
+
+.player-result:last-child {
+  border-bottom: 0 !important;
+}
+
+.player-result:hover,
+.player-result:focus {
+  background: rgba(230,180,20,.12) !important;
+  outline: none;
+}
+
+.player-result-name {
+  display: block;
+  width: 100%;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.player-result-meta {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  color: rgba(255,255,255,.62);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .player-results {
+    max-height: 260px;
+    padding: 6px;
+    border-radius: 13px;
+  }
+
+  .player-result {
+    min-height: 66px !important;
+    padding: 12px 13px !important;
+  }
+
+  .player-result-name {
+    font-size: 16px;
+  }
+
+  .player-result-meta {
+    font-size: 13px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">SSB Bhayangkara Junior 2018</div>
+      <a class="back" href="/pelatih">← Pelatih</a>
+    </header>
+
+    <main>
+      <div class="eyebrow">PENILAIAN PEMAIN</div>
+      <h1>Perkembangan Pemain</h1>
+      <p class="intro">
+        Penilaian berkala sebagai dasar pembinaan dan perkembangan anak.
+      </p>
+
+      <section class="panel">
+        <h2>Input Penilaian</h2>
+
+        <form id="evaluationForm">
+          <div class="form-grid">
+            <label class="player-picker">
+              Pemain
+              <input
+                id="playerSearch"
+                type="search"
+                placeholder="Ketik nama pemain..."
+                autocomplete="off"
+              />
+              <input id="playerId" type="hidden" required />
+              <div id="playerResults" class="player-results"></div>
+              <small class="picker-help">
+                Ketik minimal 2 huruf untuk mencari pemain.
+              </small>
+            </label>
+
+            <label>
+              Periode
+              <input id="period" type="text" placeholder="Contoh: September 2026" required />
+            </label>
+          </div>
+
+          <br />
+
+          <div class="scores">
+            <label class="score">
+              Teknik
+              <input id="technical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Taktik
+              <input id="tactical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Fisik
+              <input id="physical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Mental
+              <input id="mental" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Kerja Sama
+              <input id="teamwork" type="number" min="1" max="10" value="5" required />
+            </label>
+          </div>
+
+          <br />
+
+          <label>
+            Catatan Pelatih
+            <textarea id="notes" placeholder="Catatan perkembangan, kelebihan, dan bagian yang perlu ditingkatkan..."></textarea>
+          </label>
+
+          <br />
+
+          <button class="save" type="submit">
+            Simpan Penilaian
+          </button>
+
+          <div id="message" class="message"></div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Riwayat Penilaian</h2>
+        <div id="history" class="history">
+          <div class="mini">Memuat data...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script is:inline>
+    let players = [];
+
+    const form = document.getElementById('evaluationForm');
+    const history = document.getElementById('history');
+    const message = document.getElementById('message');
+
+    async function checkAuth() {
+      const res = await fetch('/api/auth/me', {
+        cache: 'no-store'
+      });
+
+      const data = await res.json();
+
+      if (!data.authenticated) {
+        location.href = '/login';
+        return false;
+      }
+
+      if (data.user.role !== 'pelatih') {
+        const destinations = {
+          admin: '/admin/pendaftaran',
+          pelatih: '/pelatih',
+          orang_tua: '/orang-tua',
+          siswa: '/siswa'
+        };
+
+        location.href =
+          destinations[data.user.role] || '/login';
+
+        return false;
+      }
+
+      return true;
+    }
+
+    const playerSearch =
+      document.getElementById('playerSearch');
+
+    const playerResults =
+      document.getElementById('playerResults');
+
+    function escapePlayerHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function getPlayerId(player, index) {
+      return String(
+        player.id ||
+        player.nomor ||
+        player.nomor_pendaftaran ||
+        `player-${index}`
+      );
+    }
+
+    function getPlayerName(player) {
+      return String(
+        player.nama ||
+        player.name ||
+        player.nama_siswa ||
+        'Pemain'
+      );
+    }
+
+    function renderPlayerResults(keyword = '') {
+      const query =
+        String(keyword || '').trim().toLowerCase();
+
+      if (query.length < 2) {
+        playerResults.innerHTML =
+          '<div class="picker-empty">Ketik minimal 2 huruf untuk mencari.</div>';
+        playerResults.classList.add('show');
+        return;
+      }
+
+      const matches = players
+        .map((player, index) => ({
+          player,
+          index,
+          id: getPlayerId(player, index),
+          name: getPlayerName(player)
+        }))
+        .filter(item =>
+          item.name.toLowerCase().includes(query)
+        )
+        .slice(0, 12);
+
+      if (!matches.length) {
+        playerResults.innerHTML =
+          '<div class="picker-empty">Pemain tidak ditemukan.</div>';
+        playerResults.classList.add('show');
+        return;
+      }
+
+      playerResults.innerHTML = matches.map(item => `
+        <button
+          type="button"
+          class="player-result"
+          data-index="${item.index}"
+        >
+          <span class="player-result-name">${escapePlayerHtml(item.name)}</span>
+          <span class="player-result-meta">
+            ${escapePlayerHtml(
+              String(
+                item.player.nomor ||
+                item.player.nomor_pendaftaran ||
+                item.id ||
+                'ID pemain'
+              )
+            )}
+          </span>
+        </button>
+      `).join('');
+
+      playerResults.classList.add('show');
+    }
+
+    function choosePlayer(player, index) {
+      const id = getPlayerId(player, index);
+      const name = getPlayerName(player);
+
+      document.getElementById('playerId').value = id;
+      playerSearch.value = name;
+
+      playerResults.innerHTML = '';
+      playerResults.classList.remove('show');
+    }
+
+    async function loadPlayers() {
+      const res = await fetch('/api/pelatih/data', {
+        cache: 'no-store'
+      });
+
+      if (!res.ok) {
+        playerResults.innerHTML =
+          '<div class="picker-empty">Gagal memuat pemain.</div>';
+        playerResults.classList.add('show');
+        return;
+      }
+
+      const data = await res.json();
+
+      players = Array.isArray(data.data?.players)
+        ? data.data.players.filter(item => {
+            const status = String(item.status || '').toLowerCase();
+            return status === 'diterima' || status === 'accepted';
+          })
+        : [];
+
+      document.getElementById('playerId').value = '';
+      playerSearch.value = '';
+
+      playerResults.innerHTML =
+        '<div class="picker-empty">Ketik nama pemain untuk mencari.</div>';
+
+      console.log('Pemain tersedia:', players.length);
+    }
+
+    playerSearch?.addEventListener('input', event => {
+      document.getElementById('playerId').value = '';
+      renderPlayerResults(event.target.value);
+    });
+
+    playerSearch?.addEventListener('focus', () => {
+      if (playerSearch.value.length >= 2) {
+        renderPlayerResults(playerSearch.value);
+      }
+    });
+
+    playerResults?.addEventListener('click', event => {
+      const button = event.target.closest('.player-result');
+      if (!button) return;
+
+      const index = Number(button.dataset.index);
+      const player = players[index];
+
+      if (player) {
+        choosePlayer(player, index);
+      }
+    });
+
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.player-picker')) {
+        playerResults?.classList.remove('show');
+      }
+    });
+
+    async function loadHistory() {
+      const res = await fetch('/api/pelatih/penilaian', {
+        cache: 'no-store'
+      });
+
+      const data = await res.json();
+
+      if (!data.success || !data.data.length) {
+        history.innerHTML =
+          '<div class="mini">Belum ada penilaian.</div>';
+        return;
+      }
+
+      history.innerHTML = data.data.map(item => `
+        <article class="item">
+          <div class="item-head">
+            <div>
+              <strong>${item.playerName}</strong>
+              <div class="period">${item.period}</div>
+            </div>
+
+            <button
+              class="delete"
+              type="button"
+              data-delete="${item.id}"
+            >
+              Hapus
+            </button>
+          </div>
+
+          <div class="mini">
+            Teknik ${item.technical}/10 ·
+            Taktik ${item.tactical}/10 ·
+            Fisik ${item.physical}/10 ·
+            Mental ${item.mental}/10 ·
+            Kerja Sama ${item.teamwork}/10
+          </div>
+
+          ${
+            item.notes
+              ? `<div class="mini">${item.notes}</div>`
+              : ''
+          }
+        </article>
+      `).join('');
+
+      history.querySelectorAll('[data-delete]').forEach(button => {
+        button.addEventListener('click', async () => {
+          if (!confirm('Hapus penilaian ini?')) return;
+
+          const res = await fetch('/api/pelatih/penilaian', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: button.dataset.delete
+            })
+          });
+
+          const result = await res.json();
+
+          if (!result.success) {
+            alert(result.message || 'Gagal menghapus.');
+            return;
+          }
+
+          loadHistory();
+        });
+      });
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+
+
+      const playerId =
+        document.getElementById('playerId').value;
+
+      const playerName =
+        playerSearch.value.trim();
+
+      if (!playerId || !playerName) {
+        message.textContent = 'Pilih pemain terlebih dahulu.';
+        playerSearch.focus();
+        return;
+      }
+
+      message.textContent = 'Menyimpan...';
+
+      const res = await fetch('/api/pelatih/penilaian', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          playerId,
+          playerName,
+          period: document.getElementById('period').value,
+          technical: document.getElementById('technical').value,
+          tactical: document.getElementById('tactical').value,
+          physical: document.getElementById('physical').value,
+          mental: document.getElementById('mental').value,
+          teamwork: document.getElementById('teamwork').value,
+          notes: document.getElementById('notes').value
+        })
+      });
+
+      const result = await res.json();
+
+      if (!result.success) {
+        message.textContent =
+          result.message || 'Gagal menyimpan.';
+        return;
+      }
+
+      message.textContent = '✓ Penilaian berhasil disimpan.';
+      document.getElementById('notes').value = '';
+
+      loadHistory();
+    });
+
+    (async () => {
+      if (!await checkAuth()) return;
+
+      await loadPlayers();
+      await loadHistory();
+    })();
+  </script>
+</body>
+</html>

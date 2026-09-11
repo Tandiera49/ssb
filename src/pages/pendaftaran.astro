@@ -1,0 +1,1313 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Pendaftaran | SSB Bhayangkara Junior 2018">
+  <main class="registration-page">
+
+    <section class="reg-hero">
+      <div class="reg-container">
+        <div class="eyebrow">SSB BHAYANGKARA JUNIOR 2018</div>
+        <h1>Pendaftaran<br><span>Peserta Didik</span></h1>
+        <p>
+          Lengkapi data calon peserta didik dan orang tua/wali
+          untuk memulai proses pendaftaran SSB Bhayangkara Junior 2018.
+        </p>
+      </div>
+    </section>
+
+    <section class="reg-section">
+      <div class="reg-container">
+
+        <div class="info-card">
+          <div class="info-icon">₱</div>
+          <div>
+            <strong>Rincian Pembayaran</strong>
+            <div class="cost-list" id="registrationCosts">
+              <div class="cost-row">
+                <span>Administrasi</span>
+                <strong data-cost="administration">Rp100.000</strong>
+              </div>
+              <div class="cost-row">
+                <span>1 Jersey + Kaos Kaki</span>
+                <strong data-cost="jerseyAndSocks">Rp250.000</strong>
+              </div>
+              <div class="cost-row">
+                <span>SPP Awal</span>
+                <strong data-cost="initialSpp">Rp150.000</strong>
+              </div>
+              <div class="cost-row cost-total">
+                <span>Total Pembayaran Awal</span>
+                <strong data-cost="initialTotal">Rp500.000</strong>
+              </div>
+              <div class="cost-row cost-monthly">
+                <span>SPP Bulanan</span>
+                <strong data-cost="monthlySpp">Rp150.000 / bulan</strong>
+              </div>
+            </div>
+            <small>
+              Pembayaran tunai atau transfer BCA 0670332489 a.n. LELY TUTIK LESTARI
+            </small>
+          </div>
+        </div>
+
+        <form id="registrationForm" class="registration-form">
+
+          <div class="form-card">
+            <div class="section-number">01</div>
+            <div class="form-card-content">
+              <h2>Data Siswa</h2>
+              <p class="section-desc">Isi data calon peserta didik dengan lengkap.</p>
+
+              <div class="field-grid">
+                <label class="field full">
+                  <span>Nama Lengkap Siswa <b>*</b></span>
+                  <input name="nama_siswa" required placeholder="Nama lengkap siswa">
+                </label>
+
+                <label class="field">
+                  <span>Tempat Lahir <b>*</b></span>
+                  <input name="tempat_lahir" required placeholder="Contoh: Tangerang">
+                </label>
+
+                <label class="field">
+                  <span>Tanggal Lahir <b>*</b></span>
+                  <input type="date" name="tanggal_lahir" required>
+                </label>
+
+                <label class="field">
+                  <span>NISN</span>
+                  <input name="nisn" inputmode="numeric" placeholder="Nomor Induk Siswa Nasional">
+                </label>
+
+                <label class="field full">
+                  <span>Alamat Rumah <b>*</b></span>
+                  <textarea name="alamat" required rows="3" placeholder="Alamat lengkap tempat tinggal"></textarea>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="section-number">02</div>
+            <div class="form-card-content">
+              <h2>Data Orang Tua / Wali</h2>
+              <p class="section-desc">Informasi ayah dan ibu/wali peserta didik.</p>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>Nama Ayah <b>*</b></span>
+                  <input name="nama_ayah" required>
+                </label>
+
+                <label class="field">
+                  <span>Nomor HP Ayah <b>*</b></span>
+                  <input name="hp_ayah" required inputmode="tel">
+                </label>
+
+                <label class="field">
+                  <span>Pekerjaan Ayah</span>
+                  <input name="pekerjaan_ayah">
+                </label>
+
+                <label class="field">
+                  <span>Nama Ibu <b>*</b></span>
+                  <input name="nama_ibu" required>
+                </label>
+
+                <label class="field">
+                  <span>Nomor HP Ibu <b>*</b></span>
+                  <input name="hp_ibu" required inputmode="tel">
+                </label>
+
+                <label class="field">
+                  <span>Pekerjaan Ibu</span>
+                  <input name="pekerjaan_ibu">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="section-number">03</div>
+            <div class="form-card-content">
+              <h2>Profil Sepak Bola</h2>
+              <p class="section-desc">Riwayat dan informasi olahraga calon siswa.</p>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>Posisi Bermain <b>*</b></span>
+                  <select name="posisi" required>
+                    <option value="">Pilih posisi</option>
+                    <option>Kiper</option>
+                    <option>Bek</option>
+                    <option>Gelandang</option>
+                    <option>Penyerang</option>
+                    <option>Serba Bisa</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Riwayat SSB Sebelumnya</span>
+                  <input name="ssb_sebelumnya" placeholder="Nama SSB / Belum pernah">
+                </label>
+
+                <label class="field full">
+                  <span>Prestasi</span>
+                  <textarea name="prestasi" rows="3" placeholder="Prestasi sepak bola atau prestasi lainnya"></textarea>
+                </label>
+
+                <label class="field">
+                  <span>Tinggi Badan (cm)</span>
+                  <input type="number" name="tinggi" min="50" max="250">
+                </label>
+
+                <label class="field">
+                  <span>Berat Badan (kg)</span>
+                  <input type="number" name="berat" min="5" max="200">
+                </label>
+
+                <label class="field">
+                  <span>Golongan Darah</span>
+                  <select name="golongan_darah">
+                    <option value="">Pilih</option>
+                    <option>A</option>
+                    <option>B</option>
+                    <option>AB</option>
+                    <option>O</option>
+                  </select>
+                </label>
+
+                <label class="field full">
+                  <span>Riwayat Penyakit / Alergi</span>
+                  <textarea name="penyakit_alergi" rows="3" placeholder="Jika tidak ada, tulis: Tidak ada"></textarea>
+                </label>
+
+                <label class="field full">
+                  <span>Riwayat Cedera</span>
+                  <textarea name="riwayat_cedera" rows="3" placeholder="Jika tidak ada, tulis: Tidak ada"></textarea>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="section-number">04</div>
+            <div class="form-card-content">
+              <h2>Persyaratan Dokumen</h2>
+              <p class="section-desc">
+                Upload dokumen persyaratan. File akan digunakan untuk proses administrasi pendaftaran.
+              </p>
+
+              <div class="upload-grid">
+
+                <label class="upload-box">
+                  <input type="file" name="pas_foto" data-upload-input accept="image/*" required>
+                  <div class="upload-status" data-upload-status="pas_foto">
+                    <span class="upload-status-icon">⬜</span>
+                    <span class="upload-status-text">Belum dipilih</span>
+                  </div>
+                  <span class="upload-icon">📷</span>
+                  <strong>Pas Foto 3×4</strong>
+                  <small>1 lembar · JPG / PNG · Online</small>
+                  <em>Pilih file</em>
+                </label>
+
+                <label class="upload-box">
+                  <input type="file" name="akta" data-upload-input accept="image/*,.pdf" required>
+              <div class="upload-status" data-upload-status="akta">
+                <span class="upload-status-icon">⬜</span>
+                <span class="upload-status-text">Belum dipilih</span>
+              </div>
+                  <span class="upload-icon">📄</span>
+                  <strong>Akta Kelahiran</strong>
+                  <small>Foto / PDF</small>
+                  <em>Pilih file</em>
+                </label>
+
+                <label class="upload-box">
+                  <input type="file" name="kk" data-upload-input accept="image/*,.pdf" required>
+              <div class="upload-status" data-upload-status="kk">
+                <span class="upload-status-icon">⬜</span>
+                <span class="upload-status-text">Belum dipilih</span>
+              </div>
+                  <span class="upload-icon">📄</span>
+                  <strong>Kartu Keluarga</strong>
+                  <small>Foto / PDF</small>
+                  <em>Pilih file</em>
+                </label>
+
+                <label class="upload-box">
+                  <input type="file" name="rapor" data-upload-input accept="image/*,.pdf" required>
+              <div class="upload-status" data-upload-status="rapor">
+                <span class="upload-status-icon">⬜</span>
+                <span class="upload-status-text">Belum dipilih</span>
+              </div>
+                  <span class="upload-icon">📚</span>
+                  <strong>Rapor Bagian Depan</strong>
+                  <small>Foto / PDF</small>
+                  <em>Pilih file</em>
+                </label>
+
+              </div>
+
+              <div id="fileStatus" class="file-status"></div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="section-number">05</div>
+            <div class="form-card-content">
+              <h2>Persetujuan Orang Tua / Wali</h2>
+              <p class="section-desc">
+                Dengan mengirimkan formulir ini, orang tua/wali menyatakan telah
+                membaca, memahami, dan menyetujui tata tertib SSB Bhayangkara Junior 2018.
+              </p>
+
+              <div class="rules-note">
+                <strong>Catatan</strong>
+                <p>
+                  Tata tertib siswa dan orang tua tercantum dalam formulir resmi.
+                  Manajemen SSB melakukan evaluasi peserta didik setiap enam bulan.
+                </p>
+              </div>
+
+              <label class="check-row">
+                <input type="checkbox" name="persetujuan" required>
+                <span>
+                  Saya sebagai orang tua/wali menyetujui data yang saya isi benar
+                  dan menyetujui tata tertib SSB Bhayangkara Junior 2018.
+                </span>
+              </label>
+
+              <label class="field">
+                <span>Nama Orang Tua / Wali <b>*</b></span>
+                <input name="nama_wali" required placeholder="Nama lengkap orang tua/wali">
+              </label>
+            </div>
+          </div>
+
+          <div class="submit-area">
+            <button type="submit" class="submit-btn">
+              <span>Kirim Pendaftaran</span>
+              <b>→</b>
+            </button>
+            <p>
+              Setelah sistem backend aktif, data ini akan diproses menjadi
+              formulir PDF resmi dan dokumen persyaratan akan dilampirkan.
+            </p>
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .cost-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .cost-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .cost-row span {
+      color: #bfd0c9;
+    }
+
+    .cost-row strong {
+      color: #ffd21c;
+      white-space: nowrap;
+    }
+
+    .cost-total {
+      margin-top: 3px;
+      background: rgba(255,210,28,.07);
+      border-color: rgba(255,210,28,.22);
+    }
+
+    .cost-total span {
+      color: #f4f7f2;
+      font-weight: 700;
+    }
+
+    .cost-total strong {
+      font-size: 1.02rem;
+    }
+
+    .cost-monthly {
+      background: rgba(0,59,42,.5);
+    }
+
+    @media (max-width: 700px) {
+      .cost-row {
+        align-items: flex-start;
+      }
+
+      .cost-row strong {
+        text-align: right;
+      }
+    }
+
+    .registration-page {
+      min-height: 100vh;
+      background: var(--bg, #003b2a);
+      color: #f5f7f2;
+    }
+
+    .reg-container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    .reg-hero {
+      padding: 110px 0 55px;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(255,205,35,.18), transparent 30%),
+        linear-gradient(135deg, #003b2a, #00291e);
+    }
+
+    .eyebrow {
+      color: #ffd21c;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      margin-bottom: 18px;
+    }
+
+    .reg-hero h1 {
+      margin: 0;
+      font-size: clamp(3rem, 11vw, 6.5rem);
+      line-height: .9;
+      letter-spacing: -.055em;
+    }
+
+    .reg-hero h1 span {
+      color: #ffd21c;
+    }
+
+    .reg-hero p {
+      max-width: 650px;
+      margin: 28px 0 0;
+      color: #c9ddd5;
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .reg-section {
+      padding: 28px 0 80px;
+      background: #002f22;
+    }
+
+    .info-card {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      padding: 20px;
+      border: 1px solid rgba(255,210,28,.35);
+      border-radius: 22px;
+      background: rgba(255,210,28,.07);
+    }
+
+    .info-icon {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: #ffd21c;
+      color: #003b2a;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .info-card strong {
+      color: #ffd21c;
+      font-size: 1.05rem;
+    }
+
+    .info-card p {
+      margin: 4px 0;
+      color: #e1eee9;
+    }
+
+    .info-card small {
+      color: #a9c4ba;
+    }
+
+    .registration-form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .form-card {
+      display: grid;
+      grid-template-columns: 65px 1fr;
+      gap: 20px;
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 26px;
+      background: #064b36;
+      box-shadow: 0 18px 50px rgba(0,0,0,.14);
+    }
+
+    .section-number {
+      color: #ffd21c;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .form-card-content h2 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    .section-desc {
+      margin: 7px 0 25px;
+      color: #aecbc0;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field span {
+      color: #e8f2ee;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .field b {
+      color: #ffd21c;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 13px;
+      outline: none;
+      padding: 13px 14px;
+      background: #023a2a;
+      color: #fff;
+      font: inherit;
+      transition: .2s;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #ffd21c;
+      box-shadow: 0 0 0 3px rgba(255,210,28,.1);
+    }
+
+    .field textarea {
+      resize: vertical;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .upload-box {
+      position: relative;
+      display: flex;
+      min-height: 175px;
+      padding: 22px;
+      box-sizing: border-box;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1.5px dashed rgba(255,210,28,.5);
+      border-radius: 20px;
+      background: rgba(0,39,28,.45);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .upload-box:hover {
+      transform: translateY(-2px);
+      border-color: #ffd21c;
+      background: rgba(255,210,28,.06);
+    }
+
+    .upload-box input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .upload-box strong {
+      font-size: 1rem;
+    }
+
+    .upload-box small {
+      margin-top: 5px;
+      color: #9fc0b3;
+    }
+
+    .upload-box em {
+      margin-top: 14px;
+      padding: 7px 14px;
+      border-radius: 99px;
+      background: #ffd21c;
+      color: #003b2a;
+      font-style: normal;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .file-status {
+      margin-top: 14px;
+      color: #ffd21c;
+      font-size: .9rem;
+    }
+
+    .rules-note {
+      padding: 16px;
+      border-left: 3px solid #ffd21c;
+      background: rgba(255,210,28,.06);
+      margin-bottom: 20px;
+    }
+
+    .rules-note strong {
+      color: #ffd21c;
+    }
+
+    .rules-note p {
+      margin: 7px 0 0;
+      color: #c2d9d0;
+      line-height: 1.6;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 20px 0;
+      padding: 17px;
+      border-radius: 15px;
+      background: rgba(0,0,0,.15);
+      color: #e4eee9;
+      line-height: 1.55;
+    }
+
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      accent-color: #ffd21c;
+      margin-top: 2px;
+    }
+
+    .submit-area {
+      text-align: center;
+      padding-top: 10px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      max-width: 550px;
+      border: 0;
+      border-radius: 18px;
+      padding: 18px 24px;
+      background: #ffd21c;
+      color: #003b2a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font: inherit;
+      font-weight: 900;
+      font-size: 1.05rem;
+      cursor: pointer;
+      box-shadow: 0 12px 35px rgba(255,210,28,.18);
+    }
+
+    .submit-btn b {
+      font-size: 1.4rem;
+    }
+
+    .submit-area p {
+      max-width: 650px;
+      margin: 15px auto 0;
+      color: #94b6aa;
+      font-size: .82rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+      .reg-container {
+        width: min(100% - 24px, 1100px);
+      }
+
+      .reg-hero {
+        padding: 75px 0 42px;
+      }
+
+      .form-card {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 20px;
+        border-radius: 21px;
+      }
+
+      .section-number {
+        font-size: .8rem;
+      }
+
+      .field-grid,
+      .upload-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .info-card {
+        padding: 17px;
+      }
+    }
+  
+/* STATUS UPLOAD DOKUMEN */
+.upload-status {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  padding:9px 11px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  color:#aab7ae;
+  font-size:.85rem;
+  transition:.2s ease;
+}
+
+.upload-status.has-file {
+  border-color:rgba(245,190,45,.45);
+  background:rgba(245,190,45,.08);
+  color:#f5c43d;
+}
+
+.upload-status-icon {
+  width:20px;
+  text-align:center;
+  flex:none;
+}
+
+.upload-status-text {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.upload-file-size {
+  opacity:.7;
+  margin-left:4px;
+}
+
+</style>
+
+  <script>
+  (() => {
+    const money = (value: number) =>
+      new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(Number(value || 0));
+
+    fetch('/api/biaya', { cache: 'no-store' })
+      .then(response =>
+        response.ok ? response.json() : null
+      )
+      .then(data => {
+        if (!data) return;
+
+        const values = {
+          administration: money(data.administration),
+          jerseyAndSocks: money(data.jerseyAndSocks),
+          initialSpp: money(data.initialSpp),
+          initialTotal: money(data.initialTotal),
+          monthlySpp:
+            money(data.monthlySpp) + ' / bulan'
+        };
+
+        Object.entries(values).forEach(
+          ([key, value]) => {
+            const node =
+              document.querySelector(
+                `[data-cost="${key}"]`
+              );
+
+            if (node) {
+              node.textContent = value;
+            }
+          }
+        );
+      })
+      .catch(() => {});
+  })();
+</script>
+
+<script type="module">
+    const form = document.querySelector('#registrationForm');
+
+const successModal = document.querySelector('#successModal');
+const registrationNumber = document.querySelector('#registrationNumber');
+const registrationName = document.querySelector('#registrationName');
+const successClose = document.querySelector('#successClose');
+const successCloseBottom = document.querySelector('#successCloseBottom');
+const copyRegistration = document.querySelector('#copyRegistration');
+const copyMessage = document.querySelector('#copyMessage');
+const downloadPdf = document.querySelector('#downloadPdf');
+
+let submittedRegistrationData = null;
+
+function closeSuccessModal() {
+  successModal?.classList.remove('show');
+  successModal?.setAttribute('aria-hidden', 'true');
+}
+
+function openSuccessModal(number, name) {
+  if (registrationNumber) {
+    registrationNumber.textContent = number || '-';
+  }
+
+  if (registrationName) {
+    registrationName.textContent = name || '-';
+  }
+
+  successModal?.classList.add('show');
+  successModal?.setAttribute('aria-hidden', 'false');
+}
+
+successClose?.addEventListener('click', closeSuccessModal);
+successCloseBottom?.addEventListener('click', closeSuccessModal);
+
+successModal
+  ?.querySelector('.success-backdrop')
+  ?.addEventListener('click', closeSuccessModal);
+
+copyRegistration?.addEventListener('click', async () => {
+  const number = registrationNumber?.textContent || '';
+
+  try {
+    await navigator.clipboard.writeText(number);
+
+    if (copyMessage) {
+      copyMessage.textContent =
+        '✓ Nomor pendaftaran berhasil disalin';
+    }
+
+    setTimeout(() => {
+      if (copyMessage) copyMessage.textContent = '';
+    }, 2500);
+
+  } catch {
+    if (copyMessage) {
+      copyMessage.textContent =
+        'Silakan salin nomor secara manual.';
+    }
+  }
+});
+
+downloadPdf?.addEventListener('click', async () => {
+  if (!submittedRegistrationData) {
+    alert('Data pendaftaran belum tersedia.');
+    return;
+  }
+
+  const button = downloadPdf;
+
+  button.disabled = true;
+  button.textContent = 'Membuat PDF...';
+
+  try {
+    const response = await fetch('/api/pendaftaran/pdf', {
+      method: 'POST',
+      body: submittedRegistrationData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('PDF RESPONSE:', errorText);
+      throw new Error('PDF gagal dibuat.');
+    }
+
+    const blob = await response.blob();
+
+    if (!blob.size) {
+      throw new Error('File PDF kosong.');
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download =
+      'Formulir-Pendaftaran-SSB-Bhayangkara-Junior-2018.pdf';
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1500);
+
+  } catch (error) {
+    console.error('DOWNLOAD PDF ERROR:', error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : 'Gagal membuat PDF pendaftaran.'
+    );
+
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Download PDF Pendaftaran';
+  }
+});
+
+/* UPLOAD STATUS START */
+const uploadInputs = form?.querySelectorAll(
+  '[data-upload-input]'
+);
+
+uploadInputs?.forEach((input) => {
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const updateUploadStatus = () => {
+    const name = input.getAttribute('name') || '';
+    const status = form?.querySelector(
+      `[data-upload-status="${name}"]`
+    );
+
+    if (!status) return;
+
+    const icon = status.querySelector(
+      '.upload-status-icon'
+    );
+
+    const text = status.querySelector(
+      '.upload-status-text'
+    );
+
+    const file = input.files?.[0];
+
+    if (file) {
+      const size =
+        file.size < 1024 * 1024
+          ? `${Math.max(1, Math.round(file.size / 1024))} KB`
+          : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+
+      if (icon) icon.textContent = '✓';
+      if (text) {
+        text.textContent =
+          `File siap diunggah: ${file.name} (${size})`;
+      }
+
+      status.classList.add('is-uploaded');
+      status.classList.remove('is-empty');
+    } else {
+      if (icon) icon.textContent = '○';
+      if (text) text.textContent = 'Belum ada file';
+
+      status.classList.remove('is-uploaded');
+      status.classList.add('is-empty');
+    }
+  };
+
+  input.addEventListener('change', updateUploadStatus);
+  updateUploadStatus();
+});
+/* UPLOAD STATUS END */
+
+/*
+ * SATU-SATUNYA SUBMIT HANDLER
+ */
+form?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const button = form.querySelector(
+    'button[type="submit"]'
+  );
+
+  /*
+   * Validasi HTML bawaan browser.
+   */
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  /*
+   * Validasi khusus 2 pas foto.
+   */
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Mengirim...';
+  }
+
+  try {
+    /*
+     * Simpan FormData supaya file upload
+     * tetap tersedia untuk pembuatan PDF.
+     */
+    const data = new FormData(form);
+
+    const response = await fetch(
+      '/api/pendaftaran',
+      {
+        method: 'POST',
+        body: data
+      }
+    );
+
+    const contentType =
+      response.headers.get('content-type') || '';
+
+    if (!response.ok) {
+      const text = await response.text();
+
+      console.error(
+        'PENDAFTARAN ERROR:',
+        response.status,
+        text
+      );
+
+      throw new Error(
+        `Server mengembalikan error ${response.status}.`
+      );
+    }
+
+    if (!contentType.includes('application/json')) {
+      throw new Error(
+        'Server tidak mengembalikan data JSON.'
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(
+        result.message || 'Pendaftaran gagal.'
+      );
+    }
+
+    /*
+     * Nomor resmi dari API dipakai juga untuk PDF.
+     */
+    data.set(
+      'nomor_pendaftaran',
+      result.nomor_pendaftaran
+    );
+
+    submittedRegistrationData = data;
+
+    openSuccessModal(
+      result.nomor_pendaftaran,
+      result.nama ||
+        data.get('nama_siswa') ||
+        '-'
+    );
+
+  } catch (error) {
+    console.error(
+      'SUBMIT PENDAFTARAN ERROR:',
+      error
+    );
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : 'Gagal mengirim pendaftaran.'
+    );
+
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent =
+        'Kirim Pendaftaran';
+    }
+  }
+});
+</script>
+</Layout>
+
+
+<div id="successModal" class="success-modal" aria-hidden="true">
+  <div class="success-backdrop"></div>
+  <div class="success-card" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <button type="button" class="success-close" id="successClose" aria-label="Tutup">×</button>
+
+    <div class="success-icon">✓</div>
+
+    <div class="success-label">SSB BHAYANGKARA JUNIOR 2018</div>
+    <h2 id="successTitle">Pendaftaran Berhasil!</h2>
+    <p class="success-text">
+      Data pendaftaran telah berhasil diterima.
+    </p>
+
+    <div class="registration-number">
+      <span>Nomor Pendaftaran</span>
+      <strong id="registrationNumber">-</strong>
+    </div>
+
+    <p class="success-name">
+      Nama Siswa<br>
+      <strong id="registrationName">-</strong>
+    </p>
+
+    <div class="success-actions success-actions-main">
+      <button type="button" class="btn-download-pdf" id="downloadPdf">
+        Download PDF Pendaftaran
+      </button>
+    </div>
+
+    <div class="success-actions">
+      <button type="button" class="btn-copy" id="copyRegistration">
+        Salin Nomor
+      </button>
+      <button type="button" class="btn-success-close" id="successCloseBottom">
+        Tutup
+      </button>
+    </div>
+
+    <p id="copyMessage" class="copy-message"></p>
+  </div>
+</div>
+
+
+
+
+
+<style>
+.success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+
+.success-modal.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.success-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 18, 12, .82);
+  backdrop-filter: blur(7px);
+}
+
+.success-card {
+  position: relative;
+  width: min(100%, 460px);
+  padding: 34px 28px 28px;
+  border: 1px solid rgba(214, 174, 58, .35);
+  border-radius: 28px;
+  background: linear-gradient(145deg, #073d2c, #01251c);
+  box-shadow: 0 25px 80px rgba(0,0,0,.55);
+  text-align: center;
+  transform: translateY(20px) scale(.97);
+  transition: transform .25s ease;
+}
+
+.success-modal.show .success-card {
+  transform: translateY(0) scale(1);
+}
+
+.success-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.success-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #d6ae3a;
+  color: #063526;
+  font-size: 42px;
+  font-weight: 900;
+  box-shadow: 0 0 0 8px rgba(214,174,58,.12);
+}
+
+.success-label {
+  color: #d6ae3a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+.success-card h2 {
+  margin: 8px 0 6px;
+  color: #fff;
+  font-size: 30px;
+}
+
+.success-text {
+  margin: 0 0 20px;
+  color: rgba(255,255,255,.68);
+}
+
+.registration-number {
+  padding: 16px;
+  border: 1px dashed rgba(214,174,58,.55);
+  border-radius: 16px;
+  background: rgba(0,0,0,.16);
+}
+
+.registration-number span {
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(255,255,255,.55);
+  font-size: 12px;
+}
+
+.registration-number strong {
+  display: block;
+  color: #d6ae3a;
+  font-size: 23px;
+  letter-spacing: .06em;
+  word-break: break-word;
+}
+
+.success-name {
+  margin: 18px 0;
+  color: rgba(255,255,255,.55);
+  line-height: 1.6;
+}
+
+.success-name strong {
+  color: #fff;
+  font-size: 18px;
+}
+
+.success-actions {
+  display: flex;
+  gap: 10px;
+}
+
+
+.btn-download-pdf {
+  width: 100%;
+  border: 1px solid #d6ae3a;
+  background: linear-gradient(135deg, #d6ae3a, #f0ca58);
+  color: #063526;
+  font-size: 15px;
+  box-shadow: 0 8px 25px rgba(214,174,58,.18);
+}
+
+.success-actions-main {
+  margin-bottom: 10px;
+}
+
+.btn-download-pdf:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.success-actions button {
+  flex: 1;
+  min-height: 48px;
+  border-radius: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-copy {
+  border: 1px solid #d6ae3a;
+  background: #d6ae3a;
+  color: #063526;
+}
+
+.btn-success-close {
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.07);
+  color: #fff;
+}
+
+.copy-message {
+  min-height: 18px;
+  margin: 12px 0 0;
+  color: #d6ae3a;
+  font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .success-card {
+    padding: 30px 20px 22px;
+    border-radius: 22px;
+  }
+
+  .success-card h2 {
+    font-size: 25px;
+  }
+
+  .registration-number strong {
+    font-size: 19px;
+  }
+}
+</style>

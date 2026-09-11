@@ -1,0 +1,44 @@
+---
+const { active = '' } = Astro.props;
+---
+<header class="public-nav">
+  <div class="public-nav-inner">
+    <a class="public-brand" href="/" aria-label="SSB Bhayangkara Junior 2018">
+      <img src="/icons/logo.svg" alt="" width="42" height="48" />
+      <span>Bhayangkara Junior <em>2018</em></span>
+    </a>
+    <nav aria-label="Navigasi utama">
+      <a class:list={{ active: active === 'tentang' }} href="/tentang">Tentang</a>
+      <a class:list={{ active: active === 'program' }} href="/program">Program</a>
+      <a class:list={{ active: active === 'berita' }} href="/berita">Berita & Prestasi</a>
+      <a class:list={{ active: active === 'kontak' }} href="/kontak">Kontak</a>
+      <a class="public-nav-cta" href="/pendaftaran">Daftar Sekarang <span>→</span></a>
+      <a href="/login">Login</a>
+    </nav>
+    <button class="public-nav-menu" type="button" aria-label="Buka menu" aria-expanded="false" data-public-menu>☰</button>
+  </div>
+  <div class="public-mobile-menu" data-public-mobile-menu>
+    <a href="/tentang">Tentang</a>
+    <a href="/program">Program</a>
+    <a href="/berita">Berita & Prestasi</a>
+    <a href="/kontak">Kontak</a>
+    <a href="/pendaftaran">Daftar Sekarang →</a>
+    <a href="/login">Login Anggota</a>
+  </div>
+</header>
+<script>
+  const menu = document.querySelector('[data-public-menu]');
+  const mobile = document.querySelector('[data-public-mobile-menu]');
+  menu?.addEventListener('click', () => {
+    const open = mobile?.classList.toggle('open') ?? false;
+    menu.setAttribute('aria-expanded', String(open));
+  });
+</script>
+<style>
+  .public-nav{position:sticky;top:0;z-index:40;background:rgba(2,21,13,.94);border-bottom:1px solid rgba(53,210,123,.22);backdrop-filter:blur(18px)}
+  .public-nav-inner{width:min(1180px,calc(100% - 36px));height:78px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .public-brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px}.public-brand img{object-fit:contain}.public-brand em{color:#ffd84f;font-style:normal}
+  .public-nav nav{display:flex;align-items:center;gap:20px;color:#d5e4dc;font-size:13px;font-weight:800}.public-nav nav a:hover,.public-nav nav a.active{color:#ffd84f}.public-nav-cta{padding:11px 16px;border-radius:999px;background:#f4c52d;color:#052217!important}.public-nav-cta span{margin-left:6px}
+  .public-nav-menu{display:none;border:0;background:transparent;color:#ffd84f;font-size:28px}.public-mobile-menu{display:none}
+  @media(max-width:900px){.public-nav-inner{height:70px}.public-nav nav{display:none}.public-nav-menu{display:block}.public-mobile-menu{display:flex;flex-direction:column;gap:4px;padding:8px 18px 16px;background:#02150d;max-height:0;overflow:hidden;transition:max-height .2s ease}.public-mobile-menu.open{max-height:420px}.public-mobile-menu a{padding:13px 10px;color:#e0eee7;font-weight:800;border-radius:10px}.public-mobile-menu a:hover{background:rgba(18,163,93,.15);color:#ffd84f}}
+</style>

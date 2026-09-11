@@ -1,0 +1,205 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Dashboard — SSB Bhayangkara Junior 2018"
+  description="Dashboard anggota SSB Bhayangkara Junior 2018"
+>
+
+<main class="dashboard-page">
+
+  <section class="dashboard-card">
+
+    <div class="dashboard-icon">BJ</div>
+
+    <span class="eyebrow">
+      AREA ANGGOTA
+    </span>
+
+    <h1 id="welcome">
+      Memuat dashboard...
+    </h1>
+
+    <p id="role">
+      Memeriksa sesi akun...
+    </p>
+
+    <div class="dashboard-actions">
+
+      <a
+        id="adminLink"
+        class="primary"
+        href="/admin/pendaftaran"
+        hidden
+      >
+        Dashboard Admin
+      </a>
+
+      <button
+        id="logoutButton"
+        type="button"
+      >
+        Keluar
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script is:inline>
+(async () => {
+  const welcome =
+    document.getElementById('welcome');
+
+  const role =
+    document.getElementById('role');
+
+  const adminLink =
+    document.getElementById('adminLink');
+
+  const logout =
+    document.getElementById('logoutButton');
+
+  try {
+    const response =
+      await fetch('/api/auth/me', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+
+    const data =
+      await response.json();
+
+    if (!data.authenticated) {
+      window.location.href = '/login';
+      return;
+    }
+
+    welcome.textContent =
+      `Halo, ${data.user.name}`;
+
+    role.textContent =
+      `Anda masuk sebagai ${data.user.role.replace('_', ' ')}.`;
+
+    if (data.user.role === 'admin') {
+      adminLink.hidden = false;
+    }
+  } catch {
+    window.location.href = '/login';
+  }
+
+  logout?.addEventListener(
+    'click',
+    async () => {
+      await fetch(
+        '/api/auth/logout',
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+      );
+
+      window.location.href = '/login';
+    }
+  );
+})();
+</script>
+
+<style>
+.dashboard-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 110px 20px 60px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255,210,26,.10),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #021b12,
+      #063c27 55%,
+      #022217
+    );
+}
+
+.dashboard-card {
+  width: min(100%, 520px);
+  padding: 42px;
+  text-align: center;
+  border: 1px solid rgba(255,210,26,.20);
+  border-radius: 28px;
+  background: rgba(3,34,23,.94);
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.35);
+}
+
+.dashboard-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: #ffd21a;
+  color: #073523;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.eyebrow {
+  color: #ffd21a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.dashboard-card h1 {
+  margin: 12px 0 8px;
+  color: #fff;
+  font-size: clamp(28px, 7vw, 42px);
+}
+
+.dashboard-card p {
+  color: rgba(255,255,255,.65);
+}
+
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.dashboard-actions a,
+.dashboard-actions button {
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dashboard-actions .primary {
+  display: inline-flex;
+  align-items: center;
+  background: #ffd21a;
+  color: #073523;
+}
+
+.dashboard-actions button {
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+}
+</style>
+
+</Layout>

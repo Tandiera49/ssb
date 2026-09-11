@@ -1,0 +1,15 @@
+{
+  "name": "SSB Bhayangkara Junior 2018",
+  "short_name": "BJ 2018",
+  "description": "Sekolah sepak bola untuk membentuk talenta dan karakter anak.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#031a11",
+  "theme_color": "#032b1d",
+  "lang": "id-ID",
+  "categories": ["sports", "education"],
+  "icons": [
+    { "src": "/icons/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

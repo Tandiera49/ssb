@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+const {
+  title = 'SSB Bhayangkara Junior 2018 | Sekolah Sepak Bola Tangerang Selatan',
+  description = 'SSB Bhayangkara Junior 2018 adalah sekolah sepak bola di Pamulang, Tangerang Selatan yang membina talenta muda melalui latihan terarah, karakter, disiplin, dan sportivitas.',
+  image = '/icons/logo.svg',
+  canonical,
+} = Astro.props;
+const canonicalUrl = canonical || Astro.url.href;
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#032b1d" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SportsOrganization',
+      name: 'SSB Bhayangkara Junior 2018',
+      description,
+      url: Astro.url.origin,
+      sport: 'Football',
+      address: { '@type': 'PostalAddress', addressLocality: 'Pamulang', addressRegion: 'Banten', addressCountry: 'ID' },
+    })} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+    <slot />
+  </body>
+</html>
+<style>
+  .skip-link{position:fixed;left:16px;top:10px;z-index:1000;transform:translateY(-150%);padding:10px 14px;border-radius:8px;background:#f4c52d;color:#052217;font-weight:800}.skip-link:focus{transform:translateY(0)}
+</style>

@@ -1,0 +1,498 @@
+---
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Penilaian Pemain · Pelatih</title>
+
+  <style>
+    :root {
+      --green: #073b2a;
+      --green2: #0b5139;
+      --gold: #d6ad3a;
+      --white: #fff;
+      --muted: #aebbb5;
+      --line: rgba(255,255,255,.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(214,173,58,.12), transparent 35%),
+        linear-gradient(135deg, var(--green), #031e16);
+      color: var(--white);
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 28px));
+      margin: auto;
+      padding: 24px 0 50px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 45px;
+    }
+
+    .brand {
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .back {
+      color: var(--gold);
+      border: 1px solid rgba(214,173,58,.4);
+      background: transparent;
+      border-radius: 8px;
+      padding: 9px 13px;
+      text-decoration: none;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(34px, 7vw, 60px);
+      line-height: 1;
+    }
+
+    .intro {
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      margin: 0 0 20px;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: white;
+      border-radius: 9px;
+      padding: 12px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .score label {
+      text-align: center;
+    }
+
+    .save {
+      width: 100%;
+      border: 0;
+      background: var(--gold);
+      color: #152719;
+      border-radius: 9px;
+      padding: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 12px;
+      color: var(--gold);
+      min-height: 20px;
+      font-size: 13px;
+    }
+
+    .history {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 15px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item strong {
+      color: var(--white);
+    }
+
+    .period {
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    .mini {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .delete {
+      border: 1px solid rgba(255,80,80,.35);
+      background: transparent;
+      color: #ffaaaa;
+      border-radius: 6px;
+      padding: 5px 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid,
+      .scores {
+        grid-template-columns: 1fr;
+      }
+
+      .item-head {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">SSB Bhayangkara Junior 2018</div>
+      <a class="back" href="/pelatih">← Pelatih</a>
+    </header>
+
+    <main>
+      <div class="eyebrow">PENILAIAN PEMAIN</div>
+      <h1>Perkembangan Pemain</h1>
+      <p class="intro">
+        Penilaian berkala sebagai dasar pembinaan dan perkembangan anak.
+      </p>
+
+      <section class="panel">
+        <h2>Input Penilaian</h2>
+
+        <form id="evaluationForm">
+          <div class="form-grid">
+            <label>
+              Pemain
+              <select id="playerId" required>
+                <option value="">Memuat pemain...</option>
+              </select>
+            </label>
+
+            <label>
+              Periode
+              <input id="period" type="text" placeholder="Contoh: September 2026" required />
+            </label>
+          </div>
+
+          <br />
+
+          <div class="scores">
+            <label class="score">
+              Teknik
+              <input id="technical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Taktik
+              <input id="tactical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Fisik
+              <input id="physical" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Mental
+              <input id="mental" type="number" min="1" max="10" value="5" required />
+            </label>
+
+            <label class="score">
+              Kerja Sama
+              <input id="teamwork" type="number" min="1" max="10" value="5" required />
+            </label>
+          </div>
+
+          <br />
+
+          <label>
+            Catatan Pelatih
+            <textarea id="notes" placeholder="Catatan perkembangan, kelebihan, dan bagian yang perlu ditingkatkan..."></textarea>
+          </label>
+
+          <br />
+
+          <button class="save" type="submit">
+            Simpan Penilaian
+          </button>
+
+          <div id="message" class="message"></div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Riwayat Penilaian</h2>
+        <div id="history" class="history">
+          <div class="mini">Memuat data...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script is:inline>
+    let players = [];
+
+    const form = document.getElementById('evaluationForm');
+    const playerSelect = document.getElementById('playerId');
+    const history = document.getElementById('history');
+    const message = document.getElementById('message');
+
+    async function checkAuth() {
+      const res = await fetch('/api/auth/me', {
+        cache: 'no-store'
+      });
+
+      const data = await res.json();
+
+      if (!data.authenticated) {
+        location.href = '/login';
+        return false;
+      }
+
+      if (data.user.role !== 'pelatih') {
+        const destinations = {
+          admin: '/admin/pendaftaran',
+          pelatih: '/pelatih',
+          orang_tua: '/orang-tua',
+          siswa: '/siswa'
+        };
+
+        location.href =
+          destinations[data.user.role] || '/login';
+
+        return false;
+      }
+
+      return true;
+    }
+
+    async function loadPlayers() {
+      const res = await fetch('/api/pelatih/data', {
+        cache: 'no-store'
+      });
+
+      if (!res.ok) {
+        playerSelect.innerHTML =
+          '<option value="">Gagal memuat pemain</option>';
+        return;
+      }
+
+      const data = await res.json();
+
+      players = Array.isArray(data.data?.players)
+        ? data.data.players.filter(item =>
+            String(item.status || '').toLowerCase() === 'diterima'
+          )
+        : [];
+
+      playerSelect.innerHTML =
+        '<option value="">Pilih pemain</option>' +
+        players.map((player, index) => {
+          const id =
+            player.id ||
+            player.nomor ||
+            player.nomor_pendaftaran ||
+            `player-${index}`;
+
+          const name =
+            player.nama ||
+            player.name ||
+            player.nama_siswa ||
+            'Pemain';
+
+          return `<option value="${id}" data-name="${String(name).replace(/"/g, '&quot;')}">${name}</option>`;
+        }).join('');
+    }
+
+    async function loadHistory() {
+      const res = await fetch('/api/pelatih/penilaian', {
+        cache: 'no-store'
+      });
+
+      const data = await res.json();
+
+      if (!data.success || !data.data.length) {
+        history.innerHTML =
+          '<div class="mini">Belum ada penilaian.</div>';
+        return;
+      }
+
+      history.innerHTML = data.data.map(item => `
+        <article class="item">
+          <div class="item-head">
+            <div>
+              <strong>${item.playerName}</strong>
+              <div class="period">${item.period}</div>
+            </div>
+
+            <button
+              class="delete"
+              type="button"
+              data-delete="${item.id}"
+            >
+              Hapus
+            </button>
+          </div>
+
+          <div class="mini">
+            Teknik ${item.technical}/10 ·
+            Taktik ${item.tactical}/10 ·
+            Fisik ${item.physical}/10 ·
+            Mental ${item.mental}/10 ·
+            Kerja Sama ${item.teamwork}/10
+          </div>
+
+          ${
+            item.notes
+              ? `<div class="mini">${item.notes}</div>`
+              : ''
+          }
+        </article>
+      `).join('');
+
+      history.querySelectorAll('[data-delete]').forEach(button => {
+        button.addEventListener('click', async () => {
+          if (!confirm('Hapus penilaian ini?')) return;
+
+          const res = await fetch('/api/pelatih/penilaian', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: button.dataset.delete
+            })
+          });
+
+          const result = await res.json();
+
+          if (!result.success) {
+            alert(result.message || 'Gagal menghapus.');
+            return;
+          }
+
+          loadHistory();
+        });
+      });
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+
+      const option =
+        playerSelect.options[playerSelect.selectedIndex];
+
+      const playerId = playerSelect.value;
+      const playerName = option?.dataset.name || option?.textContent || '';
+
+      message.textContent = 'Menyimpan...';
+
+      const res = await fetch('/api/pelatih/penilaian', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          playerId,
+          playerName,
+          period: document.getElementById('period').value,
+          technical: document.getElementById('technical').value,
+          tactical: document.getElementById('tactical').value,
+          physical: document.getElementById('physical').value,
+          mental: document.getElementById('mental').value,
+          teamwork: document.getElementById('teamwork').value,
+          notes: document.getElementById('notes').value
+        })
+      });
+
+      const result = await res.json();
+
+      if (!result.success) {
+        message.textContent =
+          result.message || 'Gagal menyimpan.';
+        return;
+      }
+
+      message.textContent = '✓ Penilaian berhasil disimpan.';
+      document.getElementById('notes').value = '';
+
+      loadHistory();
+    });
+
+    (async () => {
+      if (!await checkAuth()) return;
+
+      await loadPlayers();
+      await loadHistory();
+    })();
+  </script>
+</body>
+</html>

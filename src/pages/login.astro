@@ -1,0 +1,447 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Login — SSB Bhayangkara Junior 2018"
+  description="Login anggota SSB Bhayangkara Junior 2018"
+>
+
+<main class="login-page">
+  <section class="login-card">
+
+    <div class="login-brand">
+      <div class="logo-mark">BJ</div>
+      <div>
+        <strong>SSB BHAYANGKARA</strong>
+        <span>JUNIOR 2018</span>
+      </div>
+    </div>
+
+    <div class="login-heading">
+      <span class="eyebrow">AREA ANGGOTA</span>
+      <h1>Selamat Datang</h1>
+      <p>
+        Masuk untuk mengakses dashboard sesuai akun Anda.
+      </p>
+    </div>
+
+    <form id="loginForm">
+
+      <label>
+        <span>Email / Nomor HP</span>
+        <input
+          type="text"
+          name="identifier"
+          placeholder="Masukkan email atau nomor HP"
+          autocomplete="username"
+          required
+        />
+      </label>
+
+      <label>
+        <span>Password</span>
+
+        <div class="password-wrap">
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Masukkan password"
+            autocomplete="current-password"
+            required
+          />
+
+          <button
+            type="button"
+            id="togglePassword"
+            aria-label="Tampilkan password"
+          >Lihat</button>
+        </div>
+      </label>
+
+      <div id="loginMessage" class="login-message"></div>
+
+      <button class="login-button" type="submit">
+        Masuk ke Dashboard
+      </button>
+
+    </form>
+
+    <div class="login-help">
+      <a href="/">← Kembali ke Beranda</a>
+      <span>•</span>
+      <span>Akun dikelola oleh admin SSB</span>
+    </div>
+
+  </section>
+</main>
+
+<script is:inline>
+(() => {
+  const form = document.querySelector('form');
+  const identifier =
+    document.querySelector('#identifier') ||
+    document.querySelector('[name="identifier"]') ||
+    document.querySelector('[name="username"]');
+
+  const password =
+    document.querySelector('#password') ||
+    document.querySelector('[name="password"]');
+
+  const toggle =
+    document.querySelector('#togglePassword');
+
+  const message =
+    document.querySelector('#loginMessage');
+
+  const submitButton =
+    form?.querySelector('button[type="submit"]') ||
+    form?.querySelector('button');
+
+  if (!form || !identifier || !password) {
+    console.error('FORM LOGIN TIDAK LENGKAP');
+    return;
+  }
+
+  toggle?.addEventListener('click', () => {
+    const hidden =
+      password.getAttribute('type') === 'password';
+
+    password.setAttribute(
+      'type',
+      hidden ? 'text' : 'password'
+    );
+
+    toggle.textContent =
+      hidden ? 'Sembunyikan' : 'Lihat';
+  });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const username =
+      identifier.value.trim();
+
+    const passwordValue =
+      password.value;
+
+    if (!username || !passwordValue) {
+      if (message) {
+        message.textContent =
+          'Username dan password wajib diisi.';
+        message.className =
+          'login-message error';
+      }
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent =
+        'Memeriksa...';
+    }
+
+    if (message) {
+      message.textContent =
+        'Memeriksa akun...';
+      message.className =
+        'login-message';
+    }
+
+    try {
+      const response = await fetch(
+        '/api/auth/login',
+        {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store',
+          headers: {
+            'Content-Type':
+              'application/json',
+            'Accept':
+              'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password: passwordValue,
+          }),
+        }
+      );
+
+      const text =
+        await response.text();
+
+      let data = {};
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(
+          'Server mengembalikan respons yang tidak valid.'
+        );
+      }
+
+      console.log(
+        'LOGIN RESPONSE:',
+        response.status,
+        data
+      );
+
+      if (!response.ok || !data.success) {
+        if (message) {
+          message.textContent =
+            data.message ||
+            'Username atau password salah.';
+          message.className =
+            'login-message error';
+        }
+
+        password.value = '';
+        return;
+      }
+
+      if (message) {
+        message.textContent =
+          'Login berhasil. Membuka dashboard...';
+        message.className =
+          'login-message success';
+      }
+
+      const destination =
+        data.redirect ||
+        (
+          data.user?.role === 'admin'
+            ? '/admin/pendaftaran'
+            : data.user?.role === 'pelatih'
+              ? '/pelatih'
+              : data.user?.role === 'orang_tua'
+                ? '/orang-tua'
+                : data.user?.role === 'siswa'
+                  ? '/siswa'
+                  : '/dashboard'
+        );
+
+      window.location.assign(
+        destination
+      );
+
+    } catch (error) {
+      console.error(
+        'LOGIN ERROR:',
+        error
+      );
+
+      if (message) {
+        message.textContent =
+          error instanceof Error
+            ? error.message
+            : 'Gagal menghubungi server.';
+        message.className =
+          'login-message error';
+      }
+
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent =
+          'Masuk ke Dashboard';
+      }
+    }
+  });
+})();
+</script>
+
+<style>
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 110px 20px 60px;
+  background:
+    radial-gradient(circle at top right, rgba(255,210,26,.10), transparent 35%),
+    linear-gradient(145deg, #021b12, #063c27 55%, #022217);
+}
+
+.login-card {
+  width: min(100%, 460px);
+  padding: 34px;
+  border: 1px solid rgba(255,210,26,.20);
+  border-radius: 26px;
+  background: rgba(3,34,23,.94);
+  box-shadow: 0 25px 70px rgba(0,0,0,.35);
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 34px;
+}
+
+.logo-mark {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #ffd21a;
+  color: #073523;
+  font-weight: 900;
+  font-size: 17px;
+}
+
+.login-brand strong,
+.login-brand span {
+  display: block;
+}
+
+.login-brand strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+.login-brand span {
+  margin-top: 3px;
+  color: #ffd21a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.login-heading {
+  margin-bottom: 26px;
+}
+
+.eyebrow {
+  color: #ffd21a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.login-heading h1 {
+  margin: 8px 0;
+  color: #fff;
+  font-size: clamp(30px, 7vw, 42px);
+}
+
+.login-heading p {
+  margin: 0;
+  color: rgba(255,255,255,.68);
+  line-height: 1.6;
+}
+
+form {
+  display: grid;
+  gap: 20px;
+}
+
+label > span {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.85);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 15px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(255,255,255,.055);
+  color: #fff;
+  font: inherit;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,.38);
+}
+
+input:focus {
+  border-color: #ffd21a;
+  box-shadow: 0 0 0 3px rgba(255,210,26,.10);
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 82px;
+}
+
+.password-wrap button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #ffd21a;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.login-button {
+  min-height: 52px;
+  border: 0;
+  border-radius: 13px;
+  background: #ffd21a;
+  color: #073523;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-1px);
+  background: #ffe05a;
+}
+
+.login-message {
+  display: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.login-message.info {
+  display: block;
+  background: rgba(255,210,26,.10);
+  color: #ffd21a;
+}
+
+.login-help {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  color: rgba(255,255,255,.45);
+  font-size: 11px;
+  text-align: center;
+}
+
+.login-help a {
+  color: #ffd21a;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+@media (max-width: 520px) {
+  .login-card {
+    padding: 26px 20px;
+    border-radius: 20px;
+  }
+}
+</style>
+
+</Layout>
