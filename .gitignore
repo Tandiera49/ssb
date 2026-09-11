@@ -1,29 +1,13 @@
-
-# Data pendaftaran dan dokumen pribadi
-storage/pendaftaran/
-
-# Upload foto CMS
-storage/content/uploads/
-
-# Authentication data
-storage/auth/
-
 # Local/build files
 node_modules/
 .astro/
 dist/
 .wrangler/
-storage/
-.env
-.env.*
-!.env.example
 
-# Local/build files
-node_modules/
-.astro/
-dist/
-.wrangler/
+# Local application data
 storage/
+
+# Environment files
 .env
 .env.*
 !.env.example

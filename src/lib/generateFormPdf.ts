@@ -266,78 +266,81 @@ function fileExtension(file: File): string {
 async function appendImage(
   pdf: PDFDocument,
   file: File,
-  bold: PDFFont
+  bold: PDFFont,
+  regular: PDFFont,
+  label: string
 ) {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const ext = fileExtension(file);
 
+  let image;
+
   if (ext === 'jpg') {
-    const image = await pdf.embedJpg(bytes);
-    const page = pdf.addPage([PAGE_W, PAGE_H]);
-
-    page.drawText('Lampiran - Pas Foto / Dokumen Gambar', {
-      x: MARGIN,
-      y: PAGE_H - 45,
-      size: 11,
-      font: bold,
-      color: GREEN,
-    });
-
-    const maxW = PAGE_W - 70;
-    const maxH = PAGE_H - 110;
-    const scale = Math.min(
-      maxW / image.width,
-      maxH / image.height
+    image = await pdf.embedJpg(bytes);
+  } else if (ext === 'png') {
+    image = await pdf.embedPng(bytes);
+  } else {
+    throw new Error(
+      `Format file "${file.name}" tidak didukung. Gunakan JPG, PNG, atau PDF.`
     );
-
-    const w = image.width * scale;
-    const h = image.height * scale;
-
-    page.drawImage(image, {
-      x: (PAGE_W - w) / 2,
-      y: (PAGE_H - h) / 2 - 10,
-      width: w,
-      height: h,
-    });
-
-    return;
   }
 
-  if (ext === 'png') {
-    const image = await pdf.embedPng(bytes);
-    const page = pdf.addPage([PAGE_W, PAGE_H]);
+  const page = pdf.addPage([PAGE_W, PAGE_H]);
 
-    page.drawText('Lampiran - Pas Foto / Dokumen Gambar', {
-      x: MARGIN,
-      y: PAGE_H - 45,
-      size: 11,
-      font: bold,
-      color: GREEN,
-    });
+  page.drawRectangle({
+    x: 0,
+    y: PAGE_H - 78,
+    width: PAGE_W,
+    height: 78,
+    color: GREEN,
+  });
 
-    const maxW = PAGE_W - 70;
-    const maxH = PAGE_H - 110;
-    const scale = Math.min(
-      maxW / image.width,
-      maxH / image.height
-    );
-
-    const w = image.width * scale;
-    const h = image.height * scale;
-
-    page.drawImage(image, {
-      x: (PAGE_W - w) / 2,
-      y: (PAGE_H - h) / 2 - 10,
-      width: w,
-      height: h,
-    });
-
-    return;
-  }
-
-  throw new Error(
-    `Format file "${file.name}" tidak didukung. Gunakan JPG, PNG, atau PDF.`
+  text(
+    page,
+    'LAMPIRAN DOKUMEN',
+    MARGIN,
+    PAGE_H - 30,
+    17,
+    bold,
+    WHITE
   );
+
+  text(
+    page,
+    label,
+    MARGIN,
+    PAGE_H - 52,
+    10,
+    regular,
+    rgb(0.9, 0.93, 0.9)
+  );
+
+  text(
+    page,
+    file.name,
+    MARGIN,
+    PAGE_H - 69,
+    7.5,
+    regular,
+    rgb(0.85, 0.88, 0.85)
+  );
+
+  const maxW = PAGE_W - 70;
+  const maxH = PAGE_H - 115;
+  const scale = Math.min(
+    maxW / image.width,
+    maxH / image.height
+  );
+
+  const w = image.width * scale;
+  const h = image.height * scale;
+
+  page.drawImage(image, {
+    x: (PAGE_W - w) / 2,
+    y: Math.max(35, (PAGE_H - h) / 2 - 20),
+    width: w,
+    height: h,
+  });
 }
 
 async function appendPdf(
@@ -365,70 +368,20 @@ async function appendAttachment(
 ) {
   if (!file || file.size === 0) return;
 
-  const separator = pdf.addPage([PAGE_W, PAGE_H]);
-
-  separator.drawRectangle({
-    x: 0,
-    y: PAGE_H - 95,
-    width: PAGE_W,
-    height: 95,
-    color: GREEN,
-  });
-
-  text(
-    separator,
-    'LAMPIRAN DOKUMEN',
-    MARGIN,
-    PAGE_H - 40,
-    18,
-    bold,
-    WHITE
-  );
-
-  text(
-    separator,
-    label,
-    MARGIN,
-    PAGE_H - 64,
-    11,
-    regular,
-    rgb(0.9, 0.93, 0.9)
-  );
-
-  text(
-    separator,
-    `Nama file: ${file.name}`,
-    MARGIN,
-    PAGE_H - 125,
-    9,
-    regular
-  );
-
-  text(
-    separator,
-    `Ukuran: ${(file.size / 1024).toFixed(0)} KB`,
-    MARGIN,
-    PAGE_H - 143,
-    9,
-    regular
-  );
-
   const ext = fileExtension(file);
 
   if (ext === 'pdf') {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const source = await PDFDocument.load(bytes);
-    const pages = await pdf.copyPages(
-      source,
-      source.getPageIndices()
-    );
-
-    for (const copiedPage of pages) {
-      pdf.addPage(copiedPage);
-    }
-  } else {
-    await appendImage(pdf, file, bold);
+    await appendPdf(pdf, file);
+    return;
   }
+
+  await appendImage(
+    pdf,
+    file,
+    bold,
+    regular,
+    label
+  );
 }
 
 export async function generateFormPdf(
