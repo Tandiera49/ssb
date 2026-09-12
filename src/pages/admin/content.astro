@@ -3,7 +3,7 @@ import { getUserBySession } from '../../lib/authStore';
 
 const sessionToken = Astro.cookies.get('ssb_session')?.value || '';
 const currentUser = sessionToken
-  ? await getUserBySession(sessionToken)
+  ? await getUserBySession(Astro.locals, sessionToken)
   : null;
 
 if (!currentUser || currentUser.role !== 'admin') {

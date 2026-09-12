@@ -1,5 +1,6 @@
 
 import type { APIRoute } from 'astro';
+import type { App } from 'astro';
 import { getUserBySession } from '../../../lib/authStore';
 import {
   listAttendance,
@@ -16,8 +17,8 @@ function getToken(request: Request) {
   return match?.[1] || '';
 }
 
-async function requireCoach(request: Request) {
-  const user = await getUserBySession(getToken(request));
+async function requireCoach(locals: App.Locals, request: Request) {
+  const user = await getUserBySession(locals, getToken(request));
 
   if (!user) {
     return {
@@ -61,12 +62,12 @@ async function requireCoach(request: Request) {
   };
 }
 
-export const GET: APIRoute = async ({ request }) => {
-  const auth = await requireCoach(request);
+export const GET: APIRoute = async ({ request, locals }) => {
+  const auth = await requireCoach(locals, request);
   if (auth.response) return auth.response;
 
   try {
-    const data = await listAttendance();
+    const data = await listAttendance(locals);
 
     return new Response(
       JSON.stringify({
@@ -99,8 +100,8 @@ export const GET: APIRoute = async ({ request }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
-  const auth = await requireCoach(request);
+export const POST: APIRoute = async ({ request, locals }) => {
+  const auth = await requireCoach(locals, request);
   if (auth.response) return auth.response;
 
   try {
@@ -182,7 +183,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const data = await saveAttendance(
+    const data = await saveAttendance(locals, 
       playerId,
       String(player.nama_siswa || playerName).slice(0, 120),
       date,
@@ -221,8 +222,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-export const DELETE: APIRoute = async ({ request }) => {
-  const auth = await requireCoach(request);
+export const DELETE: APIRoute = async ({ request, locals }) => {
+  const auth = await requireCoach(locals, request);
   if (auth.response) return auth.response;
 
   try {
@@ -244,7 +245,7 @@ export const DELETE: APIRoute = async ({ request }) => {
       );
     }
 
-    await deleteAttendance(id);
+    await deleteAttendance(locals, id);
 
     return new Response(
       JSON.stringify({

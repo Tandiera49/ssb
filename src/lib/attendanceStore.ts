@@ -1,10 +1,5 @@
-
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
-
-const ROOT = path.join(process.cwd(), 'storage', 'attendance');
-const FILE = path.join(ROOT, 'attendance.json');
+import type { App } from 'astro';
+import { getDB } from './db';
 
 export interface AttendanceRecord {
   id: string;
@@ -17,94 +12,92 @@ export interface AttendanceRecord {
   updatedAt: string;
 }
 
-async function ensureFile() {
-  await fs.mkdir(ROOT, { recursive: true });
-
-  try {
-    await fs.access(FILE);
-  } catch {
-    await fs.writeFile(FILE, '[]', 'utf8');
-  }
+function rowToAttendance(row: any): AttendanceRecord {
+  return {
+    id: String(row.id),
+    playerId: String(row.player_id),
+    playerName: String(row.player_name),
+    date: String(row.date),
+    status: row.status,
+    note: String(row.note || ''),
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
 }
 
-async function readRecords(): Promise<AttendanceRecord[]> {
-  await ensureFile();
+export async function listAttendance(locals: App.Locals): Promise<AttendanceRecord[]> {
+  const db = getDB(locals);
+  const result = await db
+    .prepare(`
+      SELECT id, player_id, player_name, date, status, note, created_at, updated_at
+      FROM attendance
+      ORDER BY date DESC, created_at DESC
+    `)
+    .all();
 
-  try {
-    const raw = await fs.readFile(FILE, 'utf8');
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeRecords(records: AttendanceRecord[]) {
-  await ensureFile();
-
-  await fs.writeFile(
-    FILE,
-    JSON.stringify(records, null, 2),
-    'utf8'
-  );
-}
-
-export async function listAttendance() {
-  return readRecords();
+  return result.results.map(rowToAttendance);
 }
 
 export async function saveAttendance(
+  locals: App.Locals,
   playerId: string,
   playerName: string,
   date: string,
   status: AttendanceRecord['status'],
-  note = ''
-) {
-  const records = await readRecords();
-
-  const existing = records.find(
-    item =>
-      item.playerId === playerId &&
-      item.date === date
-  );
-
+  note = '',
+): Promise<AttendanceRecord> {
+  const db = getDB(locals);
   const now = new Date().toISOString();
 
-  if (existing) {
-    existing.playerName = playerName;
-    existing.status = status;
-    existing.note = note.trim();
-    existing.updatedAt = now;
+  const existing = await db
+    .prepare(`
+      SELECT id, created_at
+      FROM attendance
+      WHERE player_id = ? AND date = ?
+    `)
+    .bind(playerId, date)
+    .first<{ id: string; created_at: string }>();
 
-    await writeRecords(records);
-    return existing;
-  }
+  const id = existing?.id || crypto.randomUUID();
+  const createdAt = existing?.created_at || now;
 
-  const record: AttendanceRecord = {
-    id: crypto.randomUUID(),
-    playerId,
-    playerName,
-    date,
-    status,
-    note: note.trim(),
-    createdAt: now,
-    updatedAt: now,
-  };
+  await db
+    .prepare(`
+      INSERT INTO attendance (
+        id, player_id, player_name, date, status, note, created_at, updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(player_id, date) DO UPDATE SET
+        player_name = excluded.player_name,
+        status = excluded.status,
+        note = excluded.note,
+        updated_at = excluded.updated_at
+    `)
+    .bind(id, playerId, playerName, date, status, note, createdAt, now)
+    .run();
 
-  records.push(record);
-  await writeRecords(records);
+  const saved = await db
+    .prepare(`
+      SELECT id, player_id, player_name, date, status, note, created_at, updated_at
+      FROM attendance
+      WHERE player_id = ? AND date = ?
+    `)
+    .bind(playerId, date)
+    .first();
 
-  return record;
+  if (!saved) throw new Error('Gagal menyimpan absensi.');
+
+  return rowToAttendance(saved);
 }
 
-export async function deleteAttendance(id: string) {
-  const records = await readRecords();
+export async function deleteAttendance(
+  locals: App.Locals,
+  id: string,
+): Promise<void> {
+  const db = getDB(locals);
 
-  const filtered = records.filter(
-    item => item.id !== id
-  );
-
-  await writeRecords(filtered);
-
-  return filtered.length !== records.length;
+  await db
+    .prepare(`DELETE FROM attendance WHERE id = ?`)
+    .bind(id)
+    .run();
 }

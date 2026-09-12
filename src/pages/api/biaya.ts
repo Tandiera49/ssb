@@ -3,9 +3,9 @@ import { getFinanceConfig } from '../../lib/financeStore';
 
 export const prerender = false;
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ locals }) => {
   try {
-    const config = await getFinanceConfig();
+    const config = await getFinanceConfig(locals);
 
     const administration = Number(config.administration || 0);
     const jerseyAndSocks = Number(config.jersey || 0);

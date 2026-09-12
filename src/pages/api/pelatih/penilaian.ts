@@ -9,7 +9,7 @@ import { listRegistrations } from '../../../lib/registrationStore';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   const auth = await requireRole(request, 'pelatih');
 
   if (auth.response) return auth.response;
@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ request }) => {
     const url = new URL(request.url);
     const playerId = url.searchParams.get('playerId') || undefined;
 
-    const data = await listEvaluations(playerId);
+    const data = await listEvaluations(locals, playerId);
 
     return new Response(
       JSON.stringify({
@@ -49,7 +49,7 @@ export const GET: APIRoute = async ({ request }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const auth = await requireRole(request, 'pelatih');
 
   if (auth.response) return auth.response;
@@ -90,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
       throw new Error('Pemain tidak ditemukan atau belum diterima.');
     }
 
-    const data = await saveEvaluation({
+    const data = await saveEvaluation(locals, {
       playerId,
       playerName: String(player.nama_siswa || playerName).slice(0, 120),
       period,
@@ -134,7 +134,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-export const DELETE: APIRoute = async ({ request }) => {
+export const DELETE: APIRoute = async ({ request, locals }) => {
   const auth = await requireRole(request, 'pelatih');
 
   if (auth.response) return auth.response;
@@ -147,7 +147,7 @@ export const DELETE: APIRoute = async ({ request }) => {
       throw new Error('ID penilaian wajib diisi.');
     }
 
-    await deleteEvaluation(id);
+    await deleteEvaluation(locals, id);
 
     return new Response(
       JSON.stringify({

@@ -5,7 +5,7 @@ import { setPayment, getPlayerFinance } from '../../../lib/financeStore';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const auth = await requireAdmin(request);
   if (auth.response) return auth.response;
 
@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Status Diterima berarti pembayaran awal Rp500.000
     // sudah dikonfirmasi lunas oleh manajemen.
     if (status === 'diterima' && previousStatus !== 'diterima') {
-      await setPayment({
+      await setPayment(locals, {
         playerId: nomor,
         month: 'initial',
         paid: true,

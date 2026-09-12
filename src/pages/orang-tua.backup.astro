@@ -1,0 +1,1298 @@
+---
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#073b2a" />
+  <title>Orang Tua · SSB Bhayangkara Junior 2018</title>
+
+  <style>
+    :root {
+      --green:#073b2a;
+      --green2:#0b5139;
+      --green3:#0f6b4a;
+      --gold:#d6ad3a;
+      --cream:#f6f2e8;
+      --white:#fff;
+      --muted:#aebbb5;
+      --line:rgba(255,255,255,.10);
+      --card:rgba(255,255,255,.055);
+      --danger:#e88989;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--white);
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 85% 0%,rgba(214,173,58,.14),transparent 30%),
+        linear-gradient(145deg,var(--green),#031e16 75%);
+    }
+
+    button{font:inherit}
+
+    .wrap{
+      width:min(1180px,calc(100% - 28px));
+      margin:auto;
+      padding:18px 0 50px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:8px 0 28px;
+    }
+
+    .brand{
+      color:var(--gold);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .logout{
+      border:1px solid rgba(214,173,58,.45);
+      background:rgba(0,0,0,.12);
+      color:var(--gold);
+      border-radius:10px;
+      padding:9px 14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .hero{
+      padding:24px 0 28px;
+    }
+
+    .eyebrow{
+      color:var(--gold);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.16em;
+    }
+
+    h1{
+      margin:10px 0 10px;
+      font-size:clamp(34px,6vw,62px);
+      line-height:1;
+    }
+
+    .hero p{
+      color:var(--muted);
+      max-width:650px;
+      line-height:1.7;
+      margin:0;
+    }
+
+    .notice{
+      margin:20px 0;
+      padding:16px 18px;
+      border:1px solid rgba(214,173,58,.3);
+      border-radius:14px;
+      background:rgba(214,173,58,.07);
+      color:#eee7d2;
+    }
+
+    .notice strong{color:var(--gold)}
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin:22px 0;
+    }
+
+    .stat,.panel{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:16px;
+    }
+
+    .stat{
+      padding:17px;
+    }
+
+    .stat small{
+      color:var(--muted);
+      display:block;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .stat strong{
+      display:block;
+      margin-top:8px;
+      font-size:25px;
+      color:var(--gold);
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:1.35fr .9fr;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .panel{
+      padding:20px;
+    }
+
+    .panel.full{
+      grid-column:1/-1;
+    }
+
+    .panel-title{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:16px;
+    }
+
+    .panel-title h2{
+      font-size:18px;
+      margin:0;
+    }
+
+    .panel-title span{
+      color:var(--gold);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+
+    .profile{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .field{
+      min-width:0;
+      padding:13px 14px;
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:12px;
+      background:rgba(0,0,0,.10);
+    }
+
+    .field small{
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.07em;
+      text-transform:uppercase;
+      margin:0 0 7px;
+    }
+
+    .field strong{
+      display:block;
+      color:var(--white);
+      font-size:14px;
+      line-height:1.45;
+      font-weight:700;
+      overflow-wrap:anywhere;
+    }
+
+    .list{
+      display:grid;
+      gap:9px;
+    }
+
+    .row{
+      padding:13px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:rgba(0,0,0,.10);
+    }
+
+    .row strong{display:block;font-size:14px}
+    .row span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.5}
+
+    .attendance-grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .att{
+      min-width:0;
+      padding:12px 8px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:12px;
+      background:rgba(0,0,0,.10);
+    }
+
+    .att small{
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      margin-bottom:5px;
+    }
+    .att strong{
+      display:block;
+      color:var(--gold);
+      font-size:21px;
+      line-height:1.1;
+      font-weight:800;
+    }
+
+    .radar-wrap{
+      display:flex;
+      justify-content:center;
+      padding:4px;
+    }
+
+    canvas{
+      width:min(100%,330px);
+      height:auto;
+      aspect-ratio:1;
+    }
+
+    .eval-info{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:5px;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:6px 10px;
+      background:rgba(214,173,58,.12);
+      color:var(--gold);
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .empty{
+      padding:20px;
+      text-align:center;
+      color:var(--muted);
+      border:1px dashed var(--line);
+      border-radius:12px;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .loading{
+      padding:40px 10px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    @media(max-width:800px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .layout{grid-template-columns:1fr}
+      .panel.full{grid-column:auto}
+    }
+
+    @media(max-width:520px){
+      .wrap{width:min(100% - 20px,1180px)}
+      header{padding-bottom:14px}
+      .profile{grid-template-columns:1fr}
+      .attendance-grid{grid-template-columns:repeat(5,1fr)}
+      .stat strong{font-size:21px}
+      .panel{padding:16px}
+      h1{font-size:38px}
+    }
+
+    /* ===== Professional mobile refinement ===== */
+    .field{
+      min-width:0;
+      padding:14px 15px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.14);
+    }
+
+    .field small{
+      display:block;
+      margin:0 0 7px;
+      line-height:1.35;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+    }
+
+    .field strong{
+      display:block;
+      min-width:0;
+      font-size:14px;
+      line-height:1.5;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .row{
+      min-width:0;
+      padding:14px 15px;
+    }
+
+    .row strong{
+      line-height:1.45;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .row span{
+      margin-top:7px;
+      line-height:1.6;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .eval-breakdown{
+      display:grid;
+      gap:9px;
+      margin-top:16px;
+    }
+
+    .eval-item{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 52px;
+      gap:12px;
+      align-items:center;
+      padding:12px 13px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(0,0,0,.12);
+    }
+
+    .eval-item-main{
+      min-width:0;
+    }
+
+    .eval-item-title{
+      font-size:13px;
+      font-weight:900;
+      line-height:1.4;
+    }
+
+    .eval-item-desc{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.5;
+    }
+
+    .eval-score{
+      text-align:center;
+      color:var(--gold);
+      font-size:20px;
+      font-weight:900;
+      line-height:1;
+    }
+
+    .eval-score small{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:9px;
+      font-weight:800;
+    }
+
+    .eval-summary{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:9px;
+      margin-top:12px;
+    }
+
+    .eval-summary-card{
+      padding:12px 13px;
+      border-radius:12px;
+      background:rgba(214,173,58,.07);
+      border:1px solid rgba(214,173,58,.18);
+    }
+
+    .eval-summary-card small{
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.35;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .eval-summary-card strong{
+      display:block;
+      margin-top:5px;
+      color:var(--gold);
+      font-size:18px;
+      line-height:1.3;
+    }
+
+    .eval-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.6;
+    }
+
+    .security-panel{
+      margin-top:16px;
+    }
+
+    .security-form{
+      display:grid;
+      gap:12px;
+      max-width:620px;
+    }
+
+    .security-field{
+      display:grid;
+      gap:7px;
+    }
+
+    .security-field label{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .security-field input{
+      width:100%;
+      min-height:46px;
+      padding:11px 13px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:11px;
+      outline:none;
+      color:var(--white);
+      background:rgba(0,0,0,.18);
+      font:inherit;
+    }
+
+    .security-field input:focus{
+      border-color:rgba(214,173,58,.65);
+      box-shadow:0 0 0 3px rgba(214,173,58,.08);
+    }
+
+    .security-actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .security-submit{
+      border:0;
+      border-radius:11px;
+      padding:11px 16px;
+      color:#071b14;
+      background:var(--gold);
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .security-submit:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .security-message{
+      min-height:20px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .security-message.success{color:#b9e7c7}
+    .security-message.error{color:var(--danger)}
+
+    @media(max-width:520px){
+      .eval-item{
+        grid-template-columns:minmax(0,1fr) 48px;
+        gap:9px;
+      }
+
+      .eval-summary{
+        grid-template-columns:1fr;
+      }
+
+      .security-actions{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .security-submit{
+        width:100%;
+      }
+    }
+
+
+    @media(max-width:620px){
+      .profile{
+        grid-template-columns:1fr;
+      }
+
+      .eval-summary{
+        grid-template-columns:1fr;
+      }
+
+      .field{
+        padding:12px 13px;
+      }
+
+      .field strong{
+        font-size:14px;
+      }
+
+      .attendance-grid{
+        gap:6px;
+      }
+
+      .att{
+        padding:11px 5px;
+      }
+
+      .att strong{
+        font-size:19px;
+      }
+
+      .data-row{
+        padding:12px;
+      }
+    }
+
+
+/* ===== MOBILE DASHBOARD POLISH UI6 ===== */
+@media (max-width: 760px) {
+  .profile .field,
+  .profile .data-row,
+  .profile .info-row {
+    display: grid !important;
+    grid-template-columns: minmax(125px, 38%) minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: start !important;
+    margin-bottom: 13px !important;
+    line-height: 1.35 !important;
+  }
+
+  .profile .field strong,
+  .profile .data-row strong,
+  .profile .info-row strong {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  .attendance-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .attendance-grid .att {
+    min-height: 72px !important;
+    padding: 13px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 5px !important;
+    text-align: center !important;
+  }
+
+  .attendance-grid .att strong {
+    display: block !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+  }
+
+  .attendance-grid .att span,
+  .attendance-grid .att small {
+    display: block !important;
+    font-size: 13px !important;
+  }
+
+  .evaluation,
+  .evaluation-card {
+    overflow: hidden !important;
+  }
+
+  .evaluation .radar,
+  .evaluation-card .radar,
+  .radar-wrap,
+  .radar-container {
+    max-width: 290px !important;
+    width: 100% !important;
+    margin: 12px auto 18px !important;
+  }
+
+  .evaluation-details,
+  .evaluation-data,
+  .evaluation-info {
+    text-align: left !important;
+    margin-top: 12px !important;
+  }
+
+  .evaluation-details > *,
+  .evaluation-data > *,
+  .evaluation-info > * {
+    margin-bottom: 9px !important;
+  }
+
+  .evaluation-details strong,
+  .evaluation-data strong,
+  .evaluation-info strong {
+    font-weight: 800 !important;
+  }
+
+  .schedule-list,
+  .jadwal-list {
+    display: grid !important;
+    gap: 10px !important;
+  }
+
+  .schedule-item,
+  .jadwal-item {
+    padding: 12px 14px !important;
+    display: grid !important;
+    grid-template-columns: 72px minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: start !important;
+  }
+
+  .schedule-item strong,
+  .jadwal-item strong {
+    white-space: nowrap !important;
+  }
+
+  .schedule-item span,
+  .jadwal-item span {
+    overflow-wrap: anywhere !important;
+  }
+}
+
+/* desktop tetap lega */
+.profile .field,
+.profile .data-row,
+.profile .info-row {
+  line-height: 1.45;
+}
+
+.finance-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.finance-stat { padding:14px; border:1px solid rgba(214,173,58,.2); border-radius:12px; background:rgba(214,173,58,.06); }
+.finance-stat small { display:block; color:#91a99d; }
+.finance-stat strong { display:block; margin-top:6px; color:#d6ad3a; font-size:18px; }
+.finance-invoices { display:grid; gap:8px; }
+.invoice-row { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:14px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.025); }
+.invoice-row small { display:block; margin-top:4px; color:#91a99d; }
+.invoice-row > div:last-child { text-align:right; }
+.invoice-row b { display:block; color:#f1f6f2; }
+.invoice-status { display:inline-block; margin-top:5px; color:#d6ad3a; font-size:12px; font-weight:800; }
+.invoice-status.paid { color:#77d59a; }.invoice-status.overdue { color:#e38d8d; }.invoice-status.upcoming { color:#9dc4e8; }
+.finance-note,.finance-empty { margin:16px 0 0; color:#91a99d; font-size:13px; line-height:1.6; }
+@media(max-width:600px){.finance-summary{grid-template-columns:1fr}.invoice-row{display:block}.invoice-row > div:last-child{text-align:left;margin-top:8px}}
+
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">SSB Bhayangkara Junior 2018</div>
+      <button id="logout" class="logout" type="button">Keluar</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">ORANG TUA / WALI</div>
+        <h1 id="welcome">Dashboard Orang Tua</h1>
+        <p>Pantau perkembangan anak, kehadiran, jadwal latihan, evaluasi pelatih, dan informasi SSB dari satu tempat.</p>
+      </section>
+
+      <div id="notice" class="notice" hidden></div>
+
+      <section class="stats">
+        <div class="stat"><small>Kehadiran</small><strong id="statHadir">0</strong></div>
+        <div class="stat"><small>Penilaian</small><strong id="statEval">0</strong></div>
+        <div class="stat"><small>Status</small><strong id="statStatus">-</strong></div>
+        <div class="stat"><small>Pembayaran</small><strong id="statPayment">-</strong></div>
+      </section>
+
+      <section class="layout">
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Profil Anak</h2>
+            <span>Data siswa</span>
+          </div>
+          <div id="profile" class="profile"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Ringkasan Kehadiran</h2>
+            <span>Absensi</span>
+          </div>
+          <div id="attendance" class="attendance-grid"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Evaluasi Perkembangan</h2>
+            <span id="evalPeriod">Belum ada</span>
+          </div>
+          <div class="radar-wrap">
+            <canvas id="radar" width="330" height="330"></canvas>
+          </div>
+          <div id="evalInfo" class="eval-info">Belum ada penilaian dari pelatih.</div>
+          <div id="evalBreakdown" class="eval-breakdown"></div>
+          <div id="evalSummary" class="eval-summary"></div>
+          <div class="eval-note">
+            Nilai diberikan oleh pelatih berdasarkan perkembangan latihan dan pertandingan.
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Jadwal Latihan</h2>
+            <span>Aktif</span>
+          </div>
+          <div id="schedules" class="list"></div>
+        </article>
+
+        <article class="panel full">
+          <div class="panel-title">
+            <h2>Catatan Pelatih</h2>
+            <span>Evaluasi terbaru</span>
+          </div>
+          <div id="notes" class="list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Pengumuman</h2>
+            <span>Informasi</span>
+          </div>
+          <div id="announcements" class="list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <h2>Turnamen</h2>
+            <span>Agenda</span>
+          </div>
+          <div id="tournaments" class="list"></div>
+        </article>
+
+        <article class="panel full finance-panel">
+          <div class="panel-title">
+            <h2>Tagihan & Riwayat Pembayaran</h2>
+            <span>Informasi pembayaran</span>
+          </div>
+          <div id="financeSummary" class="finance-summary"></div>
+          <div id="financeInvoices" class="finance-invoices"></div>
+          <p class="finance-note">Pembayaran dilakukan secara manual melalui Admin SSB. Website ini hanya menampilkan tagihan dan laporan pembayaran.</p>
+        </article>
+      </section>
+
+        <article class="panel full security-panel">
+          <div class="panel-title">
+            <h2>Keamanan Akun</h2>
+            <span>Password</span>
+          </div>
+
+          <div class="security-form">
+            <div class="eval-note">
+              Ganti password menggunakan password lama. Setelah berhasil, kamu akan diminta login kembali.
+            </div>
+
+            <div class="security-field">
+              <label for="currentPassword">Password Lama</label>
+              <input id="currentPassword" type="password" autocomplete="current-password" placeholder="Masukkan password lama">
+            </div>
+
+            <div class="security-field">
+              <label for="newPassword">Password Baru</label>
+              <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Minimal 8 karakter">
+            </div>
+
+            <div class="security-field">
+              <label for="confirmPassword">Konfirmasi Password Baru</label>
+              <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Ulangi password baru">
+            </div>
+
+            <div class="security-actions">
+              <button id="changePasswordBtn" class="security-submit" type="button">
+                Ganti Password
+              </button>
+              <div id="passwordMessage" class="security-message"></div>
+            </div>
+          </div>
+        </article>
+
+    </main>
+  </div>
+
+  <script is:inline>
+    const $ = (id) => document.getElementById(id);
+
+    function esc(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[ch]));
+    }
+
+    function empty(target, text) {
+      $(target).innerHTML = `<div class="empty">${esc(text)}</div>`;
+    }
+
+    function field(label, value) {
+      return `
+        <div class="field">
+          <small>${esc(label)}</small>
+          <strong>${esc(value || '-')}</strong>
+        </div>
+      `;
+    }
+
+
+
+
+
+
+
+
+    function drawRadar(evaluation) {
+      const canvas = $('radar');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const wrap = canvas.closest('.radar-wrap');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!evaluation) {
+        if (wrap) {
+          wrap.innerHTML = `
+            <div class="no-evaluation">
+              Belum ada evaluasi dari pelatih.<br>
+              Nilai perkembangan akan tampil setelah pelatih mengisi penilaian.
+            </div>
+          `;
+        }
+        return;
+      }
+
+      if (wrap && !canvas.isConnected) return;
+
+      const labels = ['Teknik','Taktik','Fisik','Mental','Kerja Sama'];
+      const keys = ['technical','tactical','physical','mental','teamwork'];
+      const values = keys.map(key => {
+        const value = Number(evaluation?.[key]);
+        return Number.isFinite(value) ? Math.max(0, Math.min(10, value)) : 0;
+      });
+
+      const rect = canvas.getBoundingClientRect();
+      const size = Math.max(220, Math.min(330, Math.round(rect.width || 300)));
+      const ratio = window.devicePixelRatio || 1;
+
+      canvas.width = size * ratio;
+      canvas.height = size * ratio;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+
+      const cx = size / 2;
+      const cy = size / 2;
+      const radius = size * .31;
+      const levels = 5;
+      const step = (Math.PI * 2) / labels.length;
+      const startAngle = -Math.PI / 2;
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255,255,255,.12)';
+      ctx.fillStyle = 'rgba(214,173,58,.18)';
+
+      for(let level=1; level<=levels; level++){
+        const r = radius * level / levels;
+        ctx.beginPath();
+
+        labels.forEach((_,i)=>{
+          const a = startAngle + step * i;
+          const x = cx + Math.cos(a) * r;
+          const y = cy + Math.sin(a) * r;
+          i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        });
+
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      labels.forEach((label,i)=>{
+        const a = startAngle + step * i;
+        const x = cx + Math.cos(a) * radius;
+        const y = cy + Math.sin(a) * radius;
+
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.lineTo(x,y);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(214,173,58,.95)';
+        ctx.font = '700 11px Arial';
+        ctx.textAlign = x < cx - 8 ? 'right' : x > cx + 8 ? 'left' : 'center';
+        ctx.textBaseline = y < cy - 8 ? 'bottom' : y > cy + 8 ? 'top' : 'middle';
+        ctx.fillText(label,x + (x < cx ? -6 : x > cx ? 6 : 0),y + (y < cy ? -6 : y > cy ? 6 : 0));
+      });
+
+      ctx.beginPath();
+      values.forEach((value,i)=>{
+        const a = startAngle + step * i;
+        const r = radius * value / 10;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+        i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      });
+      ctx.closePath();
+
+      ctx.fillStyle = 'rgba(214,173,58,.18)';
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(214,173,58,.95)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      values.forEach((value,i)=>{
+        const a = startAngle + step * i;
+        const r = radius * value / 10;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+
+        ctx.beginPath();
+        ctx.arc(x,y,4,0,Math.PI*2);
+        ctx.fillStyle = 'rgba(214,173,58,1)';
+        ctx.fill();
+      });
+    }
+    function render(data) {
+      $('welcome').textContent = `Halo, ${data.user?.name || 'Orang Tua'}`;
+
+      if (!data.linked) {
+        $('notice').hidden = false;
+        $('notice').innerHTML =
+          '<strong>Akun belum terhubung.</strong> Data anak belum ditautkan ke akun ini oleh Admin.';
+        empty('profile','Belum ada data anak yang terhubung.');
+        empty('notes','Catatan akan tampil setelah akun terhubung dan pelatih memberikan evaluasi.');
+      } else {
+        $('notice').hidden = true;
+        const p = data.player;
+
+        $('profile').innerHTML =
+          field('Nama',p.nama) +
+          field('Nomor Pendaftaran',p.nomor) +
+          field('Tempat / Tanggal Lahir',`${p.tempatLahir}${p.tanggalLahir ? ' / '+p.tanggalLahir : ''}`) +
+          field('NISN',p.nisn) +
+          field('Posisi',p.posisi) +
+          field('Tinggi / Berat',`${p.tinggi || '-'} / ${p.berat || '-'}`) +
+          field('Golongan Darah',p.golonganDarah) +
+          field('Status Pendaftaran',p.status) +
+          field('Status Pembayaran',p.paymentStatus);
+
+        $('statStatus').textContent = p.status || '-';
+        $('statPayment').textContent = p.paymentStatus || '-';
+      }
+
+      const finance = data.finance;
+      if (finance) {
+        $('financeSummary').innerHTML =
+          `<div class="finance-stat"><small>Bulan lunas</small><strong>${finance.summary.paidCount}</strong></div>` +
+          `<div class="finance-stat"><small>Outstanding</small><strong>Rp${Number(finance.summary.outstanding || 0).toLocaleString('id-ID')}</strong></div>` +
+          `<div class="finance-stat"><small>Status bulan ini</small><strong>${esc(finance.summary.currentStatus)}</strong></div>`;
+        $('financeInvoices').innerHTML = (finance.invoices || []).map((invoice) =>
+          `<div class="invoice-row"><div><strong>${esc(invoice.label)}</strong><small>Jatuh tempo ${esc(invoice.dueDate)}</small></div><div><b>Rp${Number(invoice.amount || 0).toLocaleString('id-ID')}</b><span class="invoice-status ${esc(invoice.status)}">${invoice.status === 'paid' ? 'Lunas' : invoice.status === 'overdue' ? 'Tunggakan' : invoice.status === 'unpaid' ? 'Belum lunas' : 'Belum jatuh tempo'}</span></div></div>`
+        ).join('');
+      } else {
+        $('financeSummary').innerHTML = '<div class="finance-empty">Informasi tagihan hanya tersedia untuk akun Orang Tua/Wali.</div>';
+        $('financeInvoices').innerHTML = '';
+      }
+
+      const summary = data.attendance?.summary || {};
+      $('statHadir').textContent = summary.hadir || 0;
+
+      $('attendance').innerHTML =
+        `<div class="att"><small>Hadir</small><strong>${summary.hadir||0}</strong></div>` +
+        `<div class="att"><small>Izin</small><strong>${summary.izin||0}</strong></div>` +
+        `<div class="att"><small>Sakit</small><strong>${summary.sakit||0}</strong></div>` +
+        `<div class="att"><small>Alpa</small><strong>${summary.alpa||0}</strong></div>` +
+        `<div class="att"><small>Total</small><strong>${summary.total||0}</strong></div>`;
+
+      const evals = data.evaluations || [];
+      $('statEval').textContent = evals.length;
+
+      const latest = data.latestEvaluation || null;
+
+      const evaluationPeriod = latest?.period || latest?.month || 'Belum ada';
+      $('evalPeriod').textContent = evaluationPeriod;
+      $('evalInfo').textContent = latest
+        ? (latest.notes || 'Penilaian perkembangan dari pelatih.')
+        : 'Belum ada evaluasi dari pelatih.';
+
+      if (latest) {
+        drawRadar(latest);
+
+        const aspects = [
+          ['Teknik','technical','Passing, kontrol, dribbling, shooting, dan penguasaan bola.'],
+          ['Taktik','tactical','Pemahaman posisi, pengambilan keputusan, dan membaca permainan.'],
+          ['Fisik','physical','Kecepatan, daya tahan, koordinasi, dan kemampuan bergerak.'],
+          ['Mental','mental','Kepercayaan diri, fokus, disiplin, dan respons saat bermain.'],
+          ['Kerja Sama','teamwork','Komunikasi, kerja sama, sikap terhadap rekan, dan kontribusi tim.']
+        ];
+
+        const values = aspects.map(([label,key]) => {
+          const n = Number(latest?.[key]);
+          return {
+            label,
+            key,
+            value: Number.isFinite(n) ? Math.max(0, Math.min(10,n)) : 0
+          };
+        });
+
+        const average = values.length
+          ? values.reduce((sum,item) => sum + item.value,0) / values.length
+          : 0;
+
+        const previous = (evals || []).find(item => item !== latest);
+
+        let previousAverage = null;
+        if (previous) {
+          const previousValues = aspects.map(([,key]) => {
+            const n = Number(previous?.[key]);
+            return Number.isFinite(n) ? Math.max(0, Math.min(10,n)) : 0;
+          });
+          previousAverage = previousValues.reduce((sum,n)=>sum+n,0) / previousValues.length;
+        }
+
+        const changeText = previousAverage === null
+          ? 'Belum ada pembanding'
+          : `${(average - previousAverage) >= 0 ? '+' : ''}${(average - previousAverage).toFixed(1)} poin dari evaluasi sebelumnya`;
+
+        const coachName =
+          latest?.coachName ||
+          latest?.coach ||
+          latest?.namaPelatih ||
+          latest?.pelatih ||
+          'Pelatih';
+
+        const evalDate =
+          latest?.date ||
+          latest?.tanggal ||
+          latest?.createdAt ||
+          latest?.updatedAt ||
+          '';
+
+        const target = document.querySelector('#evalInfo');
+        if (target) {
+          target.innerHTML = `
+            <div class="eval-summary">
+              <div class="eval-meta">
+                <small>Periode</small>
+                <strong>${esc(evaluationPeriod)}</strong>
+              </div>
+              <div class="eval-meta">
+                <small>Pelatih</small>
+                <strong>${esc(coachName)}</strong>
+              </div>
+              <div class="eval-meta">
+                <small>Tanggal</small>
+                <strong>${esc(evalDate || '-')}</strong>
+              </div>
+            </div>
+
+            <div class="eval-average">
+              <small>Rata-rata terbaru</small>
+              <strong>${average.toFixed(1)} / 10</strong>
+            </div>
+
+            <div class="eval-list">
+              ${values.map(item => `
+                <div class="eval-item">
+                  <div class="eval-item-head">
+                    <strong>${esc(item.label)}</strong>
+                    <span class="eval-score">${item.value.toFixed(0)} / 10</span>
+                  </div>
+                  <div class="eval-bar">
+                    <span style="width:${item.value * 10}%"></span>
+                  </div>
+                  <div class="eval-definition">${esc(aspects.find(x=>x[1]===item.key)?.[2] || '')}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="eval-change">
+              Perubahan: <strong>${esc(changeText)}</strong>
+            </div>
+
+            ${
+              latest?.notes
+                ? `<div class="eval-change">Catatan pelatih: <strong>${esc(latest.notes)}</strong></div>`
+                : ''
+            }
+          `;
+        }
+      } else {
+        const canvas = $('radar');
+        const wrap = canvas?.closest('.radar-wrap');
+        if (wrap) {
+          wrap.innerHTML = `
+            <div class="no-evaluation">
+              Belum ada evaluasi dari pelatih.<br>
+              Nilai perkembangan akan tampil setelah pelatih mengisi penilaian.
+            </div>
+          `;
+        }
+        $('evalInfo').textContent = 'Belum ada evaluasi dari pelatih.';
+      }
+
+      const schedules = data.schedules || [];
+      schedules.length
+        ? $('schedules').innerHTML = schedules.map(x =>
+            `<div class="row"><strong>${esc(x.day || 'Jadwal')}</strong><span>${esc(x.info || '-')}</span></div>`
+          ).join('')
+        : empty('schedules','Belum ada jadwal latihan.');
+
+      const notes = evals.filter(x => x.notes);
+      notes.length
+        ? $('notes').innerHTML = notes.slice(0,8).map(x =>
+            `<div class="data-row"><strong>${esc(x.period || 'Evaluasi')}</strong><span>${esc(x.notes)}</span></div>`
+          ).join('')
+        : $('notes').innerHTML = '<div class="empty">Belum ada catatan pelatih.</div>';
+
+      const announcements = data.announcements || [];
+      announcements.length
+        ? $('announcements').innerHTML = announcements.slice(0,8).map(x =>
+            `<div class="row"><strong>${esc(x.title || x.name || 'Pengumuman')}</strong><span>${esc(x.text || x.info || x.description || '')}</span></div>`
+          ).join('')
+        : empty('announcements','Belum ada pengumuman.');
+
+      const tournaments = data.tournaments || [];
+      tournaments.length
+        ? $('tournaments').innerHTML = tournaments.map(x =>
+            `<div class="row"><strong>${esc(x.name || 'Turnamen')}</strong><span>${esc(x.info || '-')}</span></div>`
+          ).join('')
+        : empty('tournaments','Belum ada agenda turnamen.');
+    }
+
+
+    async function changePassword(){
+      const currentPassword=$('currentPassword').value;
+      const newPassword=$('newPassword').value;
+      const confirmPassword=$('confirmPassword').value;
+      const message=$('passwordMessage');
+      const button=$('changePasswordBtn');
+
+      message.className='security-message';
+      message.textContent='';
+
+      if(!currentPassword||!newPassword||!confirmPassword){
+        message.classList.add('error');
+        message.textContent='Semua kolom password wajib diisi.';
+        return;
+      }
+
+      if(newPassword.length<8){
+        message.classList.add('error');
+        message.textContent='Password baru minimal 8 karakter.';
+        return;
+      }
+
+      if(newPassword!==confirmPassword){
+        message.classList.add('error');
+        message.textContent='Konfirmasi password baru tidak sama.';
+        return;
+      }
+
+      button.disabled=true;
+      button.textContent='Memproses...';
+
+      try{
+        const response=await fetch('/api/auth/change-password',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({currentPassword,newPassword})
+        });
+
+        const data=await response.json().catch(()=>({}));
+
+        if(!response.ok||!data.success){
+          if(response.status===401){
+            window.location.href='/login';
+            return;
+          }
+          throw new Error(data.message||'Gagal mengganti password.');
+        }
+
+        message.classList.add('success');
+        message.textContent='Password berhasil diganti. Mengarahkan ke login...';
+
+        setTimeout(()=>{window.location.href='/login';},900);
+      }catch(error){
+        message.classList.add('error');
+        message.textContent=error.message||'Gagal mengganti password.';
+        button.disabled=false;
+        button.textContent='Ganti Password';
+      }
+    }
+
+    async function load() {
+      try {
+        const response = await fetch('/api/member/dashboard',{cache:'no-store'});
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          if (response.status === 401) {
+            window.location.href='/login';
+            return;
+          }
+          throw new Error(data.message || 'Gagal memuat dashboard.');
+        }
+
+        if (data.role !== 'orang_tua') {
+          const destinations = {
+            admin:'/admin/pendaftaran',
+            pelatih:'/pelatih',
+            siswa:'/siswa'
+          };
+          window.location.href = destinations[data.role] || '/login';
+          return;
+        }
+
+        render(data);
+      } catch (error) {
+        $('notice').hidden=false;
+        $('notice').textContent=error.message || 'Gagal memuat data.';
+      }
+    }
+
+    $('logout').addEventListener('click',async()=>{
+      await fetch('/api/auth/logout',{method:'POST'});
+      window.location.href='/login';
+    });
+
+    $('changePasswordBtn').addEventListener('click',changePassword);
+
+    load();
+  </script>
+</body>
+</html>

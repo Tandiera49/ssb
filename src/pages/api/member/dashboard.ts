@@ -43,7 +43,7 @@ function registrationPlayer(item: any) {
   };
 }
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   const auth = await requireRole(request, ['orang_tua', 'siswa']);
 
   if (auth.response) return auth.response;
@@ -53,8 +53,8 @@ export const GET: APIRoute = async ({ request }) => {
       await Promise.all([
         getContent(),
         listRegistrations(),
-        listAttendance(),
-        listEvaluations(),
+        listAttendance(locals),
+        listEvaluations(locals),
       ]);
 
     const accepted = registrations
@@ -89,7 +89,7 @@ export const GET: APIRoute = async ({ request }) => {
       : [];
 
     const finance = player && auth.user?.role === 'orang_tua'
-      ? await getPlayerFinance(player.id, player.tanggalPendaftaran)
+      ? await getPlayerFinance(locals, player.id, player.tanggalPendaftaran)
       : null;
 
     if (finance && player) {

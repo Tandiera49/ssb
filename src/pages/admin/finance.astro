@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import AdminNav from '../../components/AdminNav.astro';
 import { getUserBySession } from '../../lib/authStore';
 const token = Astro.cookies.get('ssb_session')?.value || '';
-const user = token ? await getUserBySession(token) : null;
+const user = token ? await getUserBySession(Astro.locals, token) : null;
 if (!user || user.role !== 'admin') return Astro.redirect('/login?redirect=/admin/finance');
 ---
 <Layout title="Finance Desk — SSB Bhayangkara Junior 2018">

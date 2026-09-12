@@ -6,7 +6,7 @@ import { getPlayerFinance } from '../../../../lib/financeStore';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = async ({ request, url, locals }) => {
   const auth = await requireAdmin(request);
   if (auth.response) return auth.response;
   const playerId = String(url.searchParams.get('playerId') || '').trim();
@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ request, url }) => {
   if (!playerId || !month) return new Response('Parameter invoice tidak lengkap.', { status: 400 });
   const registration = (await listRegistrations()).find((item: any) => item.nomor_pendaftaran === playerId && item.status === 'diterima');
   if (!registration) return new Response('Peserta tidak ditemukan.', { status: 404 });
-  const finance = await getPlayerFinance(playerId);
+  const finance = await getPlayerFinance(locals, playerId);
   const invoice = finance.invoices.find((item: any) => item.month === month);
   if (!invoice || invoice.status !== 'paid') return new Response('Invoice belum berstatus lunas.', { status: 400 });
 
