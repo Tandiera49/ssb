@@ -3,7 +3,7 @@ import '../styles/global.css';
 const {
   title = 'SSB Bhayangkara Junior 2018 | Sekolah Sepak Bola Tangerang Selatan',
   description = 'SSB Bhayangkara Junior 2018 adalah sekolah sepak bola di Pamulang, Tangerang Selatan yang membina talenta muda melalui latihan terarah, karakter, disiplin, dan sportivitas.',
-  image = '/icons/logo.svg',
+  image = '/icons/ssb-logo.png',
   canonical,
 } = Astro.props;
 const canonicalUrl = canonical || Astro.url.href;
@@ -27,7 +27,7 @@ const canonicalUrl = canonical || Astro.url.href;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/ssb-logo.png" type="image/png" />
     <title>{title}</title>
     <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',

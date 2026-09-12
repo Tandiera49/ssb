@@ -8,8 +8,16 @@
   "background_color": "#031a11",
   "theme_color": "#032b1d",
   "lang": "id-ID",
-  "categories": ["sports", "education"],
+  "categories": [
+    "sports",
+    "education"
+  ],
   "icons": [
-    { "src": "/icons/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "/icons/ssb-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
