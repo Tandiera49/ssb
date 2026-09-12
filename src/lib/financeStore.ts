@@ -198,7 +198,11 @@ export async function getPlayerFinance(playerId: string, registrationDate?: stri
     summary: {
       paidCount,
       outstanding,
-      currentStatus: invoices.find((invoice) => invoice.month === now)?.status || (now < registrationMonth ? 'upcoming' : 'unpaid'),
+      currentStatus:
+        now === registrationMonth
+          ? (initialPaid ? 'paid' : 'unpaid')
+          : (invoices.find((invoice) => invoice.month === now)?.status ||
+            (now < registrationMonth ? 'upcoming' : 'unpaid')),
     },
   };
 }
