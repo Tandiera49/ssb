@@ -1,6 +1,7 @@
 import { requireAdmin } from '../../../lib/adminAuth';
 import type { APIRoute } from 'astro';
 import { updateRegistrationStatus } from '../../../lib/registrationStore';
+import { setPayment, getPlayerFinance } from '../../../lib/financeStore';
 
 export const prerender = false;
 
@@ -24,10 +25,31 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
+    const current = await import('../../../lib/registrationStore').then(
+      ({ getRegistration }) => getRegistration(nomor)
+    );
+
+    if (!current) {
+      throw new Error('Data pendaftaran tidak ditemukan.');
+    }
+
+    const previousStatus = String(current.status || '').trim();
+
     const data = await updateRegistrationStatus(
       nomor,
       status
     );
+
+    // Status Diterima berarti pembayaran awal Rp500.000
+    // sudah dikonfirmasi lunas oleh manajemen.
+    if (status === 'diterima' && previousStatus !== 'diterima') {
+      await setPayment({
+        playerId: nomor,
+        month: 'initial',
+        paid: true,
+        note: 'Pembayaran awal dikonfirmasi saat pendaftaran diterima.',
+      });
+    }
 
     return new Response(JSON.stringify({
       success: true,

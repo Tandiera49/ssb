@@ -147,7 +147,9 @@ export async function getPlayerFinance(playerId: string, registrationDate?: stri
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       })()
     : now;
-  const months = Array.from({ length: 12 }, (_, index) => monthOffset(registrationMonth, index));
+  // SPP awal Rp150.000 sudah termasuk dalam pembayaran awal Rp500.000.
+  // Karena itu invoice SPP bulanan dimulai dari bulan setelah pendaftaran.
+  const months = Array.from({ length: 12 }, (_, index) => monthOffset(registrationMonth, index + 1));
   const initialTotal = data.config.administration + data.config.jersey + data.config.initialTuition;
   const initialPaid = payments.find((payment) => payment.month === 'initial');
   const invoices = [{
@@ -161,7 +163,20 @@ export async function getPlayerFinance(playerId: string, registrationDate?: stri
   }, ...months.map((month) => {
     const paid = payments.find((payment) => payment.month === month);
     const dueDate = monthDate(month, data.config.dueDay);
-    const status = paid ? 'paid' : month < now ? 'overdue' : month === now ? 'unpaid' : 'upcoming';
+    const dueDateKey = dueDate.toISOString().slice(0, 10);
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    let status: 'paid' | 'unpaid' | 'upcoming' | 'overdue';
+    if (paid) {
+      status = 'paid';
+    } else if (todayKey > dueDateKey) {
+      status = 'overdue';
+    } else if (todayKey >= month + '-01' && todayKey <= dueDateKey) {
+      status = 'unpaid';
+    } else {
+      status = 'upcoming';
+    }
     return {
       month,
       label: monthLabel(month),
