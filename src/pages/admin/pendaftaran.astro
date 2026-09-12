@@ -924,6 +924,136 @@ import AdminNav from '../../components/AdminNav.astro';
     color: #8fa69a;
   }
 
+  @media (max-width: 900px) {
+    .admin-page {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 86px 14px 100px;
+    }
+
+    .admin-head {
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .admin-head > div {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .refresh-btn {
+      flex: 0 0 auto;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      min-width: 0;
+      padding: 18px;
+      min-height: 108px;
+    }
+
+    .stat-card strong {
+      font-size: 34px;
+    }
+
+    .panel {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .panel-head {
+      padding: 20px 18px;
+    }
+
+    .filters {
+      flex-direction: column;
+      padding: 16px 18px 8px;
+    }
+
+    .search-box,
+    .filter-select {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .filter-result {
+      padding: 5px 18px 14px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .admin-page {
+      padding: 82px 12px 90px;
+    }
+
+    .admin-head {
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .admin-head h1 {
+      font-size: clamp(34px, 11vw, 46px);
+    }
+
+    .subtitle {
+      line-height: 1.45;
+    }
+
+    .refresh-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      padding: 16px;
+      border-radius: 17px;
+      min-height: 100px;
+    }
+
+    .stat-card span {
+      font-size: 13px;
+    }
+
+    .stat-card strong {
+      margin-top: 9px;
+      font-size: 32px;
+    }
+
+    .panel {
+      border-radius: 18px;
+    }
+
+    .panel-head {
+      padding: 18px 16px;
+    }
+
+    .panel-head h2 {
+      font-size: 25px;
+    }
+
+    .filters {
+      padding: 14px 16px 6px;
+    }
+
+    .filter-result {
+      padding: 5px 16px 12px;
+    }
+  }
+
   @media (max-width: 800px) {
     .detail-head {
       padding: 18px;
@@ -1756,20 +1886,6 @@ import AdminNav from '../../components/AdminNav.astro';
     ?.addEventListener(
       'click',
       loadRegistrations
-    );
-
-  document
-    .getElementById('searchInput')
-    ?.addEventListener(
-      'input',
-      renderRows
-    );
-
-  document
-    .getElementById('statusFilter')
-    ?.addEventListener(
-      'change',
-      renderRows
     );
 
   document

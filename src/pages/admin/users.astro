@@ -53,6 +53,16 @@ if (!currentUser || currentUser.role !== 'admin') {
 
       <div id="message" class="message hidden"></div>
 
+      <div class="user-search">
+        <span>⌕</span>
+        <input
+          id="userSearch"
+          type="search"
+          placeholder="Cari nama, username, atau role..."
+          autocomplete="off"
+        />
+      </div>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -341,6 +351,35 @@ if (!currentUser || currentUser.role !== 'admin') {
     font-size: 14px;
   }
 
+  .user-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 0 14px;
+    border: 1px solid #1c5a40;
+    border-radius: 12px;
+    background: #03291a;
+  }
+
+  .user-search span {
+    color: #e6bd35;
+    font-size: 22px;
+  }
+
+  .user-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    padding: 13px 0;
+    color: #f4f8f4;
+  }
+
+  .user-search input::placeholder {
+    color: #71897d;
+  }
+
   .table-wrap {
     overflow-x: auto;
   }
@@ -531,6 +570,7 @@ if (!currentUser || currentUser.role !== 'admin') {
   const openCreate = document.getElementById('openCreate') as HTMLButtonElement | null;
   const createForm = document.getElementById('createForm') as HTMLFormElement | null;
   const refresh = document.getElementById('refreshUsers') as HTMLButtonElement | null;
+  const userSearch = document.getElementById('userSearch') as HTMLInputElement | null;
 
   const roleLabels = {
     admin: 'Administrator',
@@ -569,6 +609,7 @@ if (!currentUser || currentUser.role !== 'admin') {
     try {
       const response = await fetch('/api/admin/users', {
         credentials: 'same-origin',
+        cache: 'no-store',
       });
 
       const result = await response.json();
@@ -590,89 +631,7 @@ if (!currentUser || currentUser.role !== 'admin') {
       usersCache.length = 0;
       usersCache.push(...users);
 
-      count.textContent =
-        `${users.length} akun terdaftar`;
-
-      if (!users.length) {
-        rows.innerHTML = `
-          <tr>
-            <td colspan="5" class="loading">
-              Belum ada akun.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      rows.innerHTML = users.map((user) => `
-        <tr>
-          <td>
-            <strong>${escapeHtml(user.name)}</strong>
-          </td>
-          <td>${escapeHtml(user.username)}</td>
-          <td>
-            <span class="role">
-              ${escapeHtml(
-                roleLabels[user.role] || user.role
-              )}
-            </span>
-          </td>
-          <td>
-            <span class="status ${
-              user.active ? 'active' : 'inactive'
-            }">
-              ${user.active ? '● Aktif' : '● Nonaktif'}
-            </span>
-          </td>
-          <td>
-            <div class="action-group">
-              <button
-                class="action-btn edit-btn"
-                data-edit-user-id="${escapeHtml(user.id)}"
-              >
-                Edit
-              </button>
-              <button
-                class="action-btn"
-                data-user-id="${escapeHtml(user.id)}"
-                data-active="${user.active}"
-              >
-                ${user.active ? 'Nonaktifkan' : 'Aktifkan'}
-              </button>
-              <button
-                class="action-btn danger-btn"
-                data-delete-user-id="${escapeHtml(user.id)}"
-              >
-                Hapus
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-
-      document
-        .querySelectorAll<HTMLButtonElement>('[data-user-id]')
-        .forEach((button) => {
-          button.addEventListener('click', () => {
-            toggleUser(
-              button.dataset.userId,
-              button.dataset.active === 'true'
-            );
-          });
-        });
-
-      rows
-        .querySelectorAll<HTMLButtonElement>('[data-edit-user-id]')
-        .forEach((button) => {
-          button.addEventListener('click', () => {
-            const userId = button.dataset.editUserId;
-            const user = usersCache.find((item) => item.id === userId);
-
-            if (user) {
-              openEditUser(user);
-            }
-          });
-        });
+      renderUsers();
     } catch (error) {
       rows.innerHTML = `
         <tr>
@@ -689,6 +648,184 @@ if (!currentUser || currentUser.role !== 'admin') {
       );
     }
   }
+
+  function renderUsers() {
+    const query =
+      (userSearch?.value || '').trim().toLowerCase();
+
+    const filtered = usersCache.filter((user) => {
+      if (!query) return true;
+
+      const roleName =
+        roleLabels[user.role as keyof typeof roleLabels] ||
+        user.role;
+
+      return [
+        user.name,
+        user.username,
+        user.role,
+        roleName,
+      ].some((value) =>
+        String(value).toLowerCase().includes(query)
+      );
+    });
+
+    count.textContent = query
+      ? `${filtered.length} dari ${usersCache.length} akun`
+      : `${usersCache.length} akun terdaftar`;
+
+    if (!filtered.length) {
+      rows.innerHTML = `
+        <tr>
+          <td colspan="5" class="loading">
+            Tidak ada pengguna yang cocok.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    rows.innerHTML = filtered.map((user) => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(user.name)}</strong>
+        </td>
+        <td>${escapeHtml(user.username)}</td>
+        <td>
+          <span class="role">
+            ${escapeHtml(
+              roleLabels[user.role as keyof typeof roleLabels] ||
+              user.role
+            )}
+          </span>
+        </td>
+        <td>
+          <span class="status ${
+            user.active ? 'active' : 'inactive'
+          }">
+            ${user.active ? '● Aktif' : '● Nonaktif'}
+          </span>
+        </td>
+        <td>
+          <div class="action-group">
+            <button
+              class="action-btn edit-btn"
+              data-edit-user-id="${escapeHtml(user.id)}"
+            >
+              Edit
+            </button>
+
+            <button
+              class="action-btn"
+              data-user-id="${escapeHtml(user.id)}"
+              data-active="${user.active}"
+            >
+              ${user.active ? 'Nonaktifkan' : 'Aktifkan'}
+            </button>
+
+            <button
+              class="action-btn danger-btn"
+              data-delete-user-id="${escapeHtml(user.id)}"
+            >
+              Hapus
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    rows
+      .querySelectorAll<HTMLButtonElement>('[data-user-id]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const id = button.dataset.userId;
+          if (!id) return;
+
+          toggleUser(
+            id,
+            button.dataset.active === 'true'
+          );
+        });
+      });
+
+    rows
+      .querySelectorAll<HTMLButtonElement>('[data-edit-user-id]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const userId = button.dataset.editUserId;
+          const user = usersCache.find(
+            (item) => item.id === userId
+          );
+
+          if (user) {
+            openEditUser(user);
+          }
+        });
+      });
+
+    rows
+      .querySelectorAll<HTMLButtonElement>('[data-delete-user-id]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const userId = button.dataset.deleteUserId;
+          if (!userId) return;
+
+          const user = usersCache.find(
+            (item) => item.id === userId
+          );
+
+          if (!user) return;
+
+          const confirmed = window.confirm(
+            `Hapus akun "${user.name}" (${user.username})?\n\nTindakan ini tidak dapat dibatalkan.`
+          );
+
+          if (!confirmed) return;
+
+          deleteUser(button, userId);
+        });
+      });
+  }
+
+  async function deleteUser(
+    button: HTMLButtonElement,
+    userId: string
+  ) {
+    button.disabled = true;
+    button.textContent = 'Menghapus...';
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: userId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || 'Gagal menghapus akun.'
+        );
+      }
+
+      showMessage('Akun berhasil dihapus.');
+      await loadUsers();
+    } catch (error) {
+      showMessage(
+        error instanceof Error
+          ? error.message
+          : 'Gagal menghapus akun.'
+      );
+
+      button.disabled = false;
+      button.textContent = 'Hapus';
+    }
+  }
+
 
   const editModal =
     document.getElementById('editModal') as HTMLDivElement | null;
@@ -812,6 +949,7 @@ if (!currentUser || currentUser.role !== 'admin') {
           },
           body: JSON.stringify({
             id,
+            action: 'status',
             active: nextActive,
           }),
         }
@@ -860,58 +998,6 @@ if (!currentUser || currentUser.role !== 'admin') {
     });
 
   document
-    .querySelectorAll<HTMLButtonElement>('[data-delete-user-id]')
-    .forEach((button) => {
-      button.addEventListener('click', async () => {
-        const userId = button.dataset.deleteUserId;
-        if (!userId) return;
-
-        const user = usersCache.find((item) => item.id === userId);
-        if (!user) return;
-
-        const confirmed = window.confirm(
-          `Hapus akun "${user.name}" (${user.username})?\n\nTindakan ini tidak dapat dibatalkan.`
-        );
-
-        if (!confirmed) return;
-
-        button.disabled = true;
-        button.textContent = 'Menghapus...';
-
-        try {
-          const response = await fetch('/api/admin/users', {
-            method: 'DELETE',
-            credentials: 'same-origin',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: userId }),
-          });
-
-          const result = await response.json();
-
-          if (!response.ok || !result.success) {
-            throw new Error(
-              result.message || 'Gagal menghapus akun.'
-            );
-          }
-
-          showMessage('Akun berhasil dihapus.');
-          await loadUsers();
-        } catch (error) {
-          showMessage(
-            error instanceof Error
-              ? error.message
-              : 'Gagal menghapus akun.'
-          );
-
-          button.disabled = false;
-          button.textContent = 'Hapus';
-        }
-      });
-    });
-
-  document
     .querySelectorAll<HTMLButtonElement>('[data-password-toggle]')
     .forEach((button) => {
       button.addEventListener('click', () => {
@@ -934,6 +1020,11 @@ if (!currentUser || currentUser.role !== 'admin') {
   refresh?.addEventListener(
     'click',
     loadUsers
+  );
+
+  userSearch?.addEventListener(
+    'input',
+    renderUsers
   );
 
   createForm?.addEventListener(
