@@ -1648,7 +1648,7 @@ export const prerender = false;
 
     function chooseAttendancePlayer(player) {
       document.getElementById('attendancePlayer').value =
-        String(player.id || '');
+        String(player.registration_number || player.nomor || player.nomor_pendaftaran || player.id || '');
 
       attendanceSearch.value =
         player.nama || player.name || 'Pemain';

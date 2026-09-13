@@ -952,9 +952,10 @@ textarea {
 
     function getPlayerId(player, index) {
       return String(
-        player.id ||
+        player.registration_number ||
         player.nomor ||
         player.nomor_pendaftaran ||
+        player.id ||
         `player-${index}`
       );
     }
