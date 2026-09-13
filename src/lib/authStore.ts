@@ -100,51 +100,16 @@ async function derivePasswordHash(
 }
 
 export async function hashPassword(password: string) {
-  const salt = bytesToHex(randomBytes(16));
-  const hash = await derivePasswordHash(password, salt);
-
-  return `pbkdf2$120000$${salt}$${hash}`;
+  // Password sederhana sementara untuk kebutuhan SSB.
+  // Kolom database tetap bernama password_hash agar tidak perlu migrasi schema.
+  return password;
 }
 
 export async function verifyPassword(
   password: string,
   stored: string
 ) {
-  const parts = stored.split('$');
-
-  if (parts.length !== 4 || parts[0] !== 'pbkdf2') {
-    return false;
-  }
-
-  const iterations = Number(parts[1]);
-  const salt = parts[2];
-  const expected = parts[3];
-
-  if (!iterations || !salt || !expected) {
-    return false;
-  }
-
-  try {
-    const actual = await derivePasswordHash(
-      password,
-      salt,
-      iterations
-    );
-
-    if (actual.length !== expected.length) {
-      return false;
-    }
-
-    let difference = 0;
-
-    for (let i = 0; i < actual.length; i++) {
-      difference |= actual.charCodeAt(i) ^ expected.charCodeAt(i);
-    }
-
-    return difference === 0;
-  } catch {
-    return false;
-  }
+  return password === stored;
 }
 
 function generateTemporaryPassword(length = 12) {
