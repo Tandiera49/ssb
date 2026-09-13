@@ -11,12 +11,12 @@ import { requireAdmin } from '../../../lib/adminAuth';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const GET: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
-    const users = await listUsers();
+    const users = await listUsers(locals);
 
     return new Response(
       JSON.stringify({
@@ -49,8 +49,8 @@ export const GET: APIRoute = async ({ request }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const POST: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
@@ -110,6 +110,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const user = await createUser(
+      locals,
       username,
       name,
       role as
@@ -154,8 +155,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-export const PATCH: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const PATCH: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
@@ -182,7 +183,7 @@ export const PATCH: APIRoute = async ({ request }) => {
     if (action === 'status') {
       const active = Boolean(body.active);
 
-      const user = await updateUserActive(id, active);
+      const user = await updateUserActive(locals, id, active);
 
       return new Response(
         JSON.stringify({
@@ -203,7 +204,7 @@ export const PATCH: APIRoute = async ({ request }) => {
       ? String(body.role || '').trim()
       : undefined;
 
-    const existingUser = await getUserById(id);
+    const existingUser = await getUserById(locals, id);
     if (!existingUser) {
       return new Response(JSON.stringify({
         success: false,
@@ -258,7 +259,7 @@ export const PATCH: APIRoute = async ({ request }) => {
       );
     }
 
-    const user = await updateUser(id, {
+    const user = await updateUser(locals, id, {
       name:
         body.name !== undefined
           ? String(body.name || '').trim()
@@ -311,8 +312,8 @@ export const PATCH: APIRoute = async ({ request }) => {
 };
 
 
-export const DELETE: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const DELETE: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
@@ -349,7 +350,7 @@ export const DELETE: APIRoute = async ({ request }) => {
       );
     }
 
-    const user = await deleteUser(id);
+    const user = await deleteUser(locals, id);
 
     return new Response(
       JSON.stringify({

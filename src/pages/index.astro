@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const schedules = Array.isArray(content.schedule) ? content.schedule : [];
 const tournaments = Array.isArray(content.tournaments) ? content.tournaments : [];
 const gallery = Array.isArray(content.gallery) ? content.gallery.slice(0, 6) : [];

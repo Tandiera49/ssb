@@ -1,6 +1,6 @@
 ---
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const whatsapp = String(content.contact?.whatsapp || '').replace(/\D/g, '');
 const instagram = String(content.contact?.instagram || '').replace(/^@/, '');
 ---

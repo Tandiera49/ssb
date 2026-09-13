@@ -7,7 +7,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "admin:create": "node scripts/create-admin.mjs",
-    "check": "astro check"
+    "check": "astro check",
+    "cf:dev": "npm run build && wrangler pages dev ./dist",
+    "db:migrate:local": "wrangler d1 migrations apply ssb-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply ssb-db --remote",
+    "deploy": "npm run build && wrangler pages deploy ./dist --project-name ssbbhayangkarjunior"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
@@ -16,5 +20,10 @@
     "astro": "^5.18.2",
     "pdf-lib": "^1.17.1",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "@types/node": "^22.20.2",
+    "wrangler": "^4.14.1"
   }
 }

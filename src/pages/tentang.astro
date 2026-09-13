@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PublicNav from '../components/PublicNav.astro';
 import PublicFooter from '../components/PublicFooter.astro';
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const missions = Array.isArray(content.mission?.items) ? content.mission.items : [];
 ---
 <Layout title="Tentang SSB Bhayangkara Junior 2018 | Pembinaan Sepak Bola Anak">

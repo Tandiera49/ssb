@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PublicNav from '../components/PublicNav.astro';
 import PublicFooter from '../components/PublicFooter.astro';
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const phone = String(content.contact?.whatsapp || '').replace(/\D/g, '');
 const instagram = String(content.contact?.instagram || '').replace(/^@/, '');
 ---

@@ -10,7 +10,7 @@ import { listRegistrations } from '../../../lib/registrationStore';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request, locals }) => {
-  const auth = await requireRole(request, 'pelatih');
+  const auth = await requireRole(request, ['pelatih'], locals);
 
   if (auth.response) return auth.response;
 
@@ -50,7 +50,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const auth = await requireRole(request, 'pelatih');
+  const auth = await requireRole(request, ['pelatih'], locals);
 
   if (auth.response) return auth.response;
 
@@ -79,7 +79,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw new Error('Periode atau catatan penilaian terlalu panjang.');
     }
 
-    const registrations = await listRegistrations();
+    const registrations = await listRegistrations(locals);
     const player = registrations.find(
       (item: any) =>
         item.nomor_pendaftaran === playerId &&
@@ -135,7 +135,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 };
 
 export const DELETE: APIRoute = async ({ request, locals }) => {
-  const auth = await requireRole(request, 'pelatih');
+  const auth = await requireRole(request, ['pelatih'], locals);
 
   if (auth.response) return auth.response;
 

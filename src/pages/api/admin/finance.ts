@@ -16,10 +16,10 @@ const json = (data: unknown, status = 200) => new Response(JSON.stringify(data),
 });
 
 export const GET: APIRoute = async ({ request, locals }) => {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
   try {
-    const registrations = (await listRegistrations()).filter((item: any) => item.status === 'diterima');
+    const registrations = (await listRegistrations(locals)).filter((item: any) => item.status === 'diterima');
     const records = await Promise.all(registrations.map(async (item: any) => ({
       playerId: item.nomor_pendaftaran,
       playerName: item.nama_siswa || 'Tanpa Nama',
@@ -34,19 +34,19 @@ export const GET: APIRoute = async ({ request, locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
   try {
     const body = await request.json();
     const action = String(body.action || '').trim();
     if (action === 'config') {
-      const config = await updateFinanceConfig(body.config || {});
+      const config = await updateFinanceConfig(locals, body.config || {});
       return json({ success: true, config });
     }
     if (action === 'payment') {
       const playerId = String(body.playerId || '').trim();
       const month = String(body.month || '').trim();
-      const registration = (await listRegistrations()).find((item: any) => item.nomor_pendaftaran === playerId && ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase()));
+      const registration = (await listRegistrations(locals)).find((item: any) => item.nomor_pendaftaran === playerId && ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase()));
       if (!registration) return json({ success: false, message: 'Pemain tidak ditemukan atau belum diterima.' }, 404);
       const payment = await setPayment(locals, { playerId, month, paid: Boolean(body.paid), note: body.note });
       return json({ success: true, payment, finance: await getPlayerFinance(locals, playerId, registration.tanggal_pendaftaran) });

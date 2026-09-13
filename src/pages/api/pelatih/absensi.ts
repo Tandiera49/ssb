@@ -148,7 +148,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    const registrations = await listRegistrations();
+    const registrations = await listRegistrations(locals);
     const player = registrations.find(
       (item: any) =>
         item.nomor_pendaftaran === playerId &&

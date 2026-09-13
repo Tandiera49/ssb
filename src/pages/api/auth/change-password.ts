@@ -4,7 +4,7 @@ import { getSessionToken } from '../../../lib/adminAuth';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const token = getSessionToken(request);
 
@@ -31,6 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
         : '';
 
     await changePasswordBySession(
+      locals,
       token,
       currentPassword,
       newPassword

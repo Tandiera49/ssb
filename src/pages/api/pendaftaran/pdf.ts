@@ -3,11 +3,11 @@ import { generateFormPdf } from '../../../lib/generateFormPdf';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const form = await request.formData();
 
-    const pdf = await generateFormPdf(form);
+    const pdf = await generateFormPdf(form, locals);
 
     return new Response(pdf, {
       status: 200,

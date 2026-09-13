@@ -7,7 +7,7 @@ import { getContent } from '../../lib/contentStore';
 const token = Astro.cookies.get('ssb_session')?.value || '';
 const user = token ? await getUserBySession(Astro.locals, token) : null;
 if (!user || user.role !== 'admin') return Astro.redirect('/login?redirect=/admin');
-const [registrations, users, content] = await Promise.all([listRegistrations(), listUsers(Astro.locals), getContent()]);
+const [registrations, users, content] = await Promise.all([listRegistrations(Astro.locals), listUsers(Astro.locals), getContent(Astro.locals)]);
 const count = (status: string) => registrations.filter((item: any) => item.status === status).length;
 const recent = registrations.slice(0, 6);
 const accepted = count('diterima');

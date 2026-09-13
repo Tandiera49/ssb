@@ -5,7 +5,7 @@ import {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const cookie =
     request.headers.get('cookie') || '';
 
@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
   if (match?.[1]) {
-    await destroySession(match[1]);
+    await destroySession(locals, match[1]);
   }
 
   const headers = new Headers({

@@ -10,7 +10,7 @@ const WINDOW_MS = 15 * 60 * 1000;
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await request.json();
 
@@ -60,6 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const user = await authenticate(
+      locals,
       username,
       password
     );
@@ -87,7 +88,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const session =
-      await createSession(user.id);
+      await createSession(locals, user.id);
     loginAttempts.delete(clientKey);
 
     const headers = new Headers({

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PublicNav from '../components/PublicNav.astro';
 import PublicFooter from '../components/PublicFooter.astro';
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const announcements = Array.isArray(content.announcements) ? content.announcements : [];
 const tournaments = Array.isArray(content.tournaments) ? content.tournaments : [];
 const gallery = Array.isArray(content.gallery) ? content.gallery : [];

@@ -6,7 +6,7 @@ import { setPayment, getPlayerFinance } from '../../../lib/financeStore';
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const current = await import('../../../lib/registrationStore').then(
-      ({ getRegistration }) => getRegistration(nomor)
+      ({ getRegistration }) => getRegistration(locals, nomor)
     );
 
     if (!current) {
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const previousStatus = String(current.status || '').trim();
 
-    const data = await updateRegistrationStatus(
+    const data = await updateRegistrationStatus(locals,
       nomor,
       status
     );

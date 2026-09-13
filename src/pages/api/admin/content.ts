@@ -7,9 +7,9 @@ import {
 
 export const prerender = false;
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ locals }) => {
   try {
-    const content = await getContent();
+    const content = await getContent(locals);
 
     return new Response(
       JSON.stringify({
@@ -42,8 +42,8 @@ export const GET: APIRoute = async () => {
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const POST: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
 
   try {
@@ -87,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    const content = await saveContent(body);
+    const content = await saveContent(locals, body);
 
     return new Response(
       JSON.stringify({

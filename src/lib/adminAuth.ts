@@ -11,13 +11,14 @@ export function getSessionToken(request: Request) {
 }
 
 export async function getAdminFromRequest(
-  request: Request
+  request: Request,
+  locals: App.Locals
 ) {
   const token = getSessionToken(request);
 
   if (!token) return null;
 
-  const user = await getUserBySession(token);
+  const user = await getUserBySession(locals, token);
 
   if (!user || user.role !== 'admin') {
     return null;
@@ -27,9 +28,10 @@ export async function getAdminFromRequest(
 }
 
 export async function requireAdmin(
-  request: Request
+  request: Request,
+  locals: App.Locals
 ) {
-  const user = await getAdminFromRequest(request);
+  const user = await getAdminFromRequest(request, locals);
 
   if (user) {
     return {

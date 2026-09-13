@@ -4,11 +4,11 @@ import { listRegistrations } from '../../../lib/registrationStore';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const GET: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
   if (auth.response) return auth.response;
   try {
-    const data = await listRegistrations();
+    const data = await listRegistrations(locals);
 
     return new Response(JSON.stringify({
       success: true,

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PublicNav from '../components/PublicNav.astro';
 import PublicFooter from '../components/PublicFooter.astro';
 import { getContent } from '../lib/contentStore';
-const content = await getContent();
+const content = await getContent(Astro.locals);
 const schedules = Array.isArray(content.schedule) ? content.schedule : [];
 const groups = [
   { age: 'U-8', title: 'Fondasi & Kesenangan', text: 'Mengenal bola, koordinasi gerak, keberanian bermain, dan kebiasaan positif melalui aktivitas yang menyenangkan.' },

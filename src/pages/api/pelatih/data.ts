@@ -11,10 +11,10 @@ function getSessionToken(request: Request) {
   return match?.[1] || '';
 }
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   try {
     const token = getSessionToken(request);
-    const user = await getUserBySession(token);
+    const user = await getUserBySession(locals, token);
 
     if (!user) {
       return new Response(JSON.stringify({
@@ -37,8 +37,8 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const [content, registrations] = await Promise.all([
-      getContent(),
-      listRegistrations(),
+      getContent(locals),
+      listRegistrations(locals),
     ]);
 
     const accepted = registrations.filter((item: any) => {

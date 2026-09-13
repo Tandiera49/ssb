@@ -2,7 +2,8 @@ import { getUserBySession } from './authStore';
 
 export async function requireRole(
   request: Request,
-  roles: string[]
+  roles: string[],
+  locals: App.Locals
 ) {
   const cookie = request.headers.get('cookie') || '';
 
@@ -29,7 +30,7 @@ export async function requireRole(
     };
   }
 
-  const user = await getUserBySession(match[1]);
+  const user = await getUserBySession(locals, match[1]);
 
   if (!user) {
     return {

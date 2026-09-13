@@ -75,7 +75,7 @@ export const onRequest = defineMiddleware(
     );
 
     const user = token
-      ? await getUserBySession(token)
+      ? await getUserBySession(context.locals, token)
       : null;
 
     if (!user || user.role !== 'admin') {

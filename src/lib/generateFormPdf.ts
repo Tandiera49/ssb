@@ -385,10 +385,11 @@ async function appendAttachment(
 }
 
 export async function generateFormPdf(
-  formData: FormData
+  formData: FormData,
+  locals: App.Locals
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
-  const finance = await getFinanceConfig();
+  const finance = await getFinanceConfig(locals);
 
   const regular = await pdf.embedFont(
     StandardFonts.Helvetica

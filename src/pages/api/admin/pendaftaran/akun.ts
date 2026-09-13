@@ -5,8 +5,8 @@ import { createParticipantAccounts } from '../../../../lib/authStore';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
-  const auth = await requireAdmin(request);
+export const POST: APIRoute = async ({ request, locals }) => {
+  const auth = await requireAdmin(request, locals);
 
   if (auth.response) {
     return auth.response;
@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const registration = await getRegistration(nomor);
+    const registration = await getRegistration(locals, nomor);
 
     if (!registration) {
       return new Response(
@@ -91,6 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const result = await createParticipantAccounts(
+      locals,
       nomor,
       studentName,
       parentName

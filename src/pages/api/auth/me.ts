@@ -5,7 +5,7 @@ import {
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   const cookie =
     request.headers.get('cookie') || '';
 
@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ request }) => {
 
   const user =
     match?.[1]
-      ? await getUserBySession(match[1])
+      ? await getUserBySession(locals, match[1])
       : null;
 
   return new Response(

@@ -1,0 +1,21 @@
+name = "ssbbhayangkarjunior"
+pages_build_output_dir = "./dist"
+
+compatibility_date = "2026-09-13"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ssb-db"
+database_id = "f0496b5c-308b-493d-95a2-8b0607c1445c"
+migrations_dir = "db/migrations"
+
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "ssb-uploads"
+
+[vars]
+PUBLIC_SITE_URL = "https://ssbbhayangkarjunior.pages.dev"
+
+[observability]
+enabled = true

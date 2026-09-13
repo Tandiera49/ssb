@@ -1,61 +1,14 @@
 import type { APIRoute } from 'astro';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { getUploads } from '../../../../lib/db';
 
-const UPLOAD_ROOT = path.join(
-  process.cwd(),
-  'storage',
-  'content',
-  'uploads'
-);
-
+const mimeMap: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.gif': 'image/gif', '.avif': 'image/avif' };
 export const prerender = false;
-
-export const GET: APIRoute = async ({ url }) => {
-  try {
-    const filename = path.basename(
-      url.searchParams.get('file') || ''
-    );
-
-    if (!filename) {
-      return new Response('File tidak ditemukan.', {
-        status: 404,
-      });
-    }
-
-    const filepath = path.join(
-      UPLOAD_ROOT,
-      filename
-    );
-
-    const bytes = await fs.readFile(filepath);
-
-    const ext = path
-      .extname(filename)
-      .toLowerCase();
-
-    const mimeMap: Record<string, string> = {
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.png': 'image/png',
-      '.webp': 'image/webp',
-      '.gif': 'image/gif',
-      '.avif': 'image/avif',
-    };
-
-    return new Response(bytes, {
-      status: 200,
-      headers: {
-        'Content-Type':
-          mimeMap[ext] || 'application/octet-stream',
-        'Cache-Control':
-          'public, max-age=31536000, immutable',
-      },
-    });
-  } catch {
-    return new Response(
-      'Foto tidak ditemukan.',
-      { status: 404 }
-    );
-  }
+export const GET: APIRoute = async ({ url, locals }) => {
+  const filename = (url.searchParams.get('file') || '').replace(/[^a-zA-Z0-9._-]/g, '');
+  if (!filename) return new Response('File tidak ditemukan.', { status: 404 });
+  const object = await getUploads(locals).get(`content/${filename}`);
+  if (!object) return new Response('Foto tidak ditemukan.', { status: 404 });
+  const ext = filename.match(/\.[a-zA-Z0-9]+$/)?.[0].toLowerCase() || '';
+  const headers = new Headers({ 'Content-Type': object.httpMetadata?.contentType || mimeMap[ext] || 'application/octet-stream', 'Cache-Control': 'public, max-age=31536000, immutable', 'ETag': object.httpEtag });
+  return new Response(object.body, { status: 200, headers });
 };

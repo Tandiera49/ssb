@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import crypto from 'node:crypto';
 import {
   getRegistration,
   saveRegistration,
@@ -7,7 +6,7 @@ import {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const formData = await request.formData();
 
@@ -65,11 +64,16 @@ export const POST: APIRoute = async ({ request }) => {
 
     let nomor = '';
     do {
-      nomor = `BJ2018-${new Date().getFullYear()}-${crypto
-        .randomBytes(4).toString('hex').toUpperCase()}`;
-    } while (await getRegistration(nomor));
+      const bytes = new Uint8Array(4);
+      crypto.getRandomValues(bytes);
+      const suffix = Array.from(bytes)
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase();
+      nomor = `BJ2018-${new Date().getFullYear()}-${suffix}`;
+    } while (await getRegistration(locals, nomor));
 
-    await saveRegistration(
+    await saveRegistration(locals,
       nomor,
       formData
     );

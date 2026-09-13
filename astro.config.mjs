@@ -1,18 +1,12 @@
 import { defineConfig } from 'astro/config';
-
-const isCloudflare = process.env.CF_PAGES === '1';
-
-const adapter = isCloudflare
-  ? (await import('@astrojs/cloudflare')).default({
-      platformProxy: {
-        enabled: true,
-      },
-    })
-  : (await import('@astrojs/node')).default({
-      mode: 'standalone',
-    });
+import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   output: 'server',
-  adapter,
+  adapter: cloudflare({
+    imageService: 'compile',
+    platformProxy: {
+      enabled: true,
+    },
+  }),
 });

@@ -44,15 +44,15 @@ function registrationPlayer(item: any) {
 }
 
 export const GET: APIRoute = async ({ request, locals }) => {
-  const auth = await requireRole(request, ['orang_tua', 'siswa']);
+  const auth = await requireRole(request, ['orang_tua', 'siswa'], locals);
 
   if (auth.response) return auth.response;
 
   try {
     const [content, registrations, attendance, evaluations] =
       await Promise.all([
-        getContent(),
-        listRegistrations(),
+        getContent(locals),
+        listRegistrations(locals),
         listAttendance(locals),
         listEvaluations(locals),
       ]);
