@@ -1253,7 +1253,7 @@ import AdminNav from '../../components/AdminNav.astro';
         String(item.nama_siswa || '').toLowerCase();
 
       const nomor =
-        String(item.nomor_pendaftaran || '').toLowerCase();
+        String(item.registration_number || '').toLowerCase();
 
       const status =
         String(item.status || 'baru').toLowerCase();
@@ -1296,7 +1296,7 @@ import AdminNav from '../../components/AdminNav.astro';
         <tr>
           <td>
             <span class="registration-number">
-              ${esc(item.nomor_pendaftaran)}
+              ${esc(item.registration_number)}
             </span>
           </td>
 
@@ -1357,7 +1357,7 @@ import AdminNav from '../../components/AdminNav.astro';
       item.nama_siswa || 'Pendaftar';
 
     $('detailNumber').textContent =
-      item.nomor_pendaftaran || '';
+      item.registration_number || '';
 
     const downloadPdfBtn =
       $('downloadPdfBtn') as HTMLAnchorElement | null;
@@ -1365,7 +1365,7 @@ import AdminNav from '../../components/AdminNav.astro';
     if (downloadPdfBtn) {
       downloadPdfBtn.href =
         `/api/admin/pendaftaran/pdf?nomor=${encodeURIComponent(
-          item.nomor_pendaftaran || ''
+          item.registration_number || ''
         )}`;
     }
 
@@ -1400,7 +1400,7 @@ import AdminNav from '../../components/AdminNav.astro';
 
         const base =
           `/api/admin/dokumen/${encodeURIComponent(
-            item.nomor_pendaftaran
+            item.registration_number
           )}/${encodeURIComponent(key)}`;
 
         return `
@@ -1522,7 +1522,7 @@ import AdminNav from '../../components/AdminNav.astro';
           </div>
 
           <div class="detail-fields">
-            ${field('No. Pendaftaran', item.nomor_pendaftaran)}
+            ${field('No. Pendaftaran', item.registration_number)}
             ${field('Tanggal Pendaftaran', formatDate(item.tanggal_pendaftaran))}
             ${field('Tempat Lahir', item.tempat_lahir)}
             ${field('Tanggal Lahir', item.tanggal_lahir)}
@@ -1661,7 +1661,7 @@ import AdminNav from '../../components/AdminNav.astro';
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              nomor: item.nomor_pendaftaran
+              nomor: item.registration_number
             })
           }
         );
@@ -1757,7 +1757,7 @@ import AdminNav from '../../components/AdminNav.astro';
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              nomor: item.nomor_pendaftaran,
+              nomor: item.registration_number,
               status: statusSelect.value
             })
           }
