@@ -364,7 +364,11 @@ export async function getPlayerFinance(
       paidCount: paidInvoices.length,
       totalInvoices: invoices.length,
       outstanding: invoices
-        .filter((invoice) => invoice.status !== 'paid')
+        .filter(
+          (invoice) =>
+            invoice.month === new Date().toISOString().slice(0, 7) &&
+            (invoice.status === 'unpaid' || invoice.status === 'overdue'),
+        )
         .reduce(
           (sum, invoice) => sum + Number(invoice.amount || 0),
           0,

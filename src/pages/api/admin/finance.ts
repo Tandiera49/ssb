@@ -21,10 +21,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
   try {
     const registrations = (await listRegistrations(locals)).filter((item: any) => item.status === 'diterima');
     const records = await Promise.all(registrations.map(async (item: any) => ({
-      playerId: item.nomor_pendaftaran,
+      playerId: item.registration_number,
       playerName: item.nama_siswa || 'Tanpa Nama',
       parentName: item.nama_wali || item.nama_ayah || item.nama_ibu || '-',
-      finance: await getPlayerFinance(locals, item.nomor_pendaftaran, item.tanggal_pendaftaran),
+      finance: await getPlayerFinance(locals, item.registration_number, item.tanggal_pendaftaran),
     })));
     return json({ success: true, config: await getFinanceConfig(locals), data: records });
   } catch (error) {
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (action === 'payment') {
       const playerId = String(body.playerId || '').trim();
       const month = String(body.month || '').trim();
-      const registration = (await listRegistrations(locals)).find((item: any) => item.nomor_pendaftaran === playerId && ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase()));
+      const registration = (await listRegistrations(locals)).find((item: any) => item.registration_number === playerId && ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase()));
       if (!registration) return json({ success: false, message: 'Pemain tidak ditemukan atau belum diterima.' }, 404);
       const payment = await setPayment(locals, { playerId, month, paid: Boolean(body.paid), note: body.note });
       return json({ success: true, payment, finance: await getPlayerFinance(locals, playerId, registration.tanggal_pendaftaran) });
