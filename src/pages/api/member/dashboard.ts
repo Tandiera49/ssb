@@ -16,8 +16,8 @@ function registrationPlayer(item: any) {
   const data = item.data || item;
 
   return {
-    id: item.nomor_pendaftaran || item.id || '',
-    nomor: item.nomor_pendaftaran || '',
+    id: item.registration_number || item.id || '',
+    nomor: item.registration_number || '',
     nama:
       data.nama_siswa ||
       data.nama ||
