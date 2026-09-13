@@ -1,4 +1,4 @@
-name = "ssbbhayangkarjunior"
+name = "ssbbhayangkarajunior"
 pages_build_output_dir = "./dist"
 
 compatibility_date = "2026-09-13"
@@ -15,7 +15,7 @@ binding = "UPLOADS"
 bucket_name = "ssb-uploads"
 
 [vars]
-PUBLIC_SITE_URL = "https://ssbbhayangkarjunior.pages.dev"
+PUBLIC_SITE_URL = "https://ssbbhayangkarajunior.pages.dev"
 
 [observability]
 enabled = true

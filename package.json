@@ -11,7 +11,7 @@
     "cf:dev": "npm run build && wrangler pages dev ./dist",
     "db:migrate:local": "wrangler d1 migrations apply ssb-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply ssb-db --remote",
-    "deploy": "npm run build && wrangler pages deploy ./dist --project-name ssbbhayangkarjunior"
+    "deploy": "npm run build && wrangler pages deploy ./dist --project-name ssbbhayangkarajunior"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
