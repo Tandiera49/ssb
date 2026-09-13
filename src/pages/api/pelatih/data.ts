@@ -55,8 +55,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
       const data = item.data || item;
 
       return {
-        id: item.nomor_pendaftaran || item.id || '',
-        nomor: item.nomor_pendaftaran || '',
+        id: item.registration_number || item.id || '',
+        nomor: item.registration_number || '',
         nama:
           data.nama ||
           data.name ||
