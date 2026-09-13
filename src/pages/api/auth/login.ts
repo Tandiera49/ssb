@@ -2,7 +2,9 @@ import type { APIRoute } from 'astro';
 import {
   authenticate,
   createSession,
+  verifyPassword,
 } from '../../../lib/authStore';
+import { getDB } from '../../../lib/db';
 
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 const MAX_ATTEMPTS = 8;
@@ -66,6 +68,46 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
 
     if (!user) {
+      // TEMP DIAGNOSTIC: membedakan row user tidak ditemukan
+      // dengan password hash yang tidak cocok.
+      try {
+        const db = getDB(locals);
+        const diagnostic = await db
+          .prepare(
+            `SELECT username, active, password_hash
+             FROM users
+             WHERE username = ?1
+             LIMIT 1`
+          )
+          .bind(username.toLowerCase())
+          .first<{ username: string; active: number; password_hash: string }>();
+
+        const found = !!diagnostic;
+        const active = diagnostic?.active === 1;
+        const hashValid = diagnostic
+          ? await verifyPassword(password, diagnostic.password_hash)
+          : false;
+
+        return new Response(
+          JSON.stringify({
+            success: false,
+            diagnostic: {
+              userFound: found,
+              active,
+              passwordValid: hashValid,
+            },
+          }),
+          {
+            status: 401,
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-store',
+            },
+          }
+        );
+      } catch (diagnosticError) {
+        console.error('LOGIN DIAGNOSTIC ERROR:', diagnosticError);
+      }
       const existing = loginAttempts.get(clientKey);
       loginAttempts.set(clientKey, {
         count: (existing?.count || 0) + 1,
