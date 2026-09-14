@@ -5,6 +5,7 @@ import {
   getFinanceConfig,
   getPlayerFinance,
   setPayment,
+  setPayments,
   updateFinanceConfig,
 } from '../../../lib/financeStore';
 
@@ -46,10 +47,42 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (action === 'payment') {
       const playerId = String(body.playerId || '').trim();
       const month = String(body.month || '').trim();
+      const months = Array.isArray(body.months)
+        ? body.months.map((value: unknown) => String(value || '').trim()).filter(Boolean)
+        : [];
+
       const registration = (await listRegistrations(locals)).find((item: any) => item.registration_number === playerId && ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase()));
       if (!registration) return json({ success: false, message: 'Pemain tidak ditemukan atau belum diterima.' }, 404);
-      const payment = await setPayment(locals, { playerId, month, paid: Boolean(body.paid), note: body.note });
-      return json({ success: true, payment, finance: await getPlayerFinance(locals, playerId, registration.tanggal_pendaftaran) });
+
+      if (months.length > 0) {
+        const payments = await setPayments(locals, {
+          playerId,
+          months,
+          paid: Boolean(body.paid),
+          note: body.note,
+        });
+
+        return json({
+          success: true,
+          payments,
+          total: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+          finance: await getPlayerFinance(locals, playerId, registration.tanggal_pendaftaran),
+        });
+      }
+
+      const payment = await setPayment(locals, {
+        playerId,
+        month,
+        paid: Boolean(body.paid),
+        note: body.note,
+      });
+
+      return json({
+        success: true,
+        payment,
+        total: payment ? Number(payment.amount || 0) : 0,
+        finance: await getPlayerFinance(locals, playerId, registration.tanggal_pendaftaran),
+      });
     }
     return json({ success: false, message: 'Aksi finance tidak valid.' }, 400);
   } catch (error) {

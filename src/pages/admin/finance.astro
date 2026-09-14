@@ -113,6 +113,7 @@ function draw(){
           <button class="row-action"
             data-player="${esc(r.playerId)}"
             data-month="${esc(i.month)}"
+            data-months="${esc(JSON.stringify(r.finance.invoices.filter(x=>x.month!=='initial'&&x.status!=='paid').map(x=>x.month)))}"
             data-paid="${i.status==='paid'?'false':'true'}">
             ${i.status==='paid'?'Batalkan':'Catat pembayaran'}
           </button>
@@ -130,10 +131,65 @@ function draw(){
     b.onclick=async()=>{
       b.disabled=true;
 
+      const paid=b.dataset.paid==='true';
+      let months=[b.dataset.month];
+
+      if(!paid){
+        let available=[];
+
+        try{
+          available=JSON.parse(b.dataset.months||'[]');
+        }catch{
+          available=[];
+        }
+
+        available=available.filter(Boolean);
+
+        const defaultMonth=b.dataset.month||'';
+        const listText=available.length
+          ? `Bulan SPP yang belum lunas:\n${available.join(', ')}\n\nMasukkan bulan yang dibayar, pisahkan dengan koma.`
+          : 'Masukkan bulan SPP yang dibayar.';
+
+        const selected=prompt(
+          `${listText}\n\nContoh: ${defaultMonth}, 2026-10, 2026-11`,
+          defaultMonth
+        );
+
+        if(selected===null){
+          b.disabled=false;
+          return;
+        }
+
+        months=Array.from(new Set(
+          selected
+            .split(',')
+            .map(v=>v.trim())
+            .filter(v=>/^\d{4}-\d{2}$/.test(v))
+        ));
+
+        if(!months.length){
+          show('Format bulan tidak valid. Gunakan contoh 2026-09, 2026-10.',true);
+          b.disabled=false;
+          return;
+        }
+
+        const invalid=months.filter(v=>available.length&&!available.includes(v));
+        if(invalid.length){
+          show(`Bulan tidak tersedia atau sudah lunas: ${invalid.join(', ')}`,true);
+          b.disabled=false;
+          return;
+        }
+      }
+
       const note=prompt(
         'Catatan pembayaran (opsional):',
         'Pembayaran diterima Admin'
       );
+
+      if(note===null){
+        b.disabled=false;
+        return;
+      }
 
       const res=await fetch('/api/admin/finance',{
         method:'POST',
@@ -141,8 +197,9 @@ function draw(){
         body:JSON.stringify({
           action:'payment',
           playerId:b.dataset.player,
-          month:b.dataset.month,
-          paid:b.dataset.paid==='true',
+          month:months[0],
+          months,
+          paid,
           note
         })
       });
@@ -153,7 +210,12 @@ function draw(){
         show(d.message||'Gagal menyimpan pembayaran',true);
         b.disabled=false;
       }else{
-        show('Pembayaran berhasil dicatat.');
+        const total=Number(d.total||0);
+        show(
+          paid
+            ? 'Pembayaran dibatalkan.'
+            : `${months.length} bulan berhasil dicatat. Total pemasukan ${money(total)}.`
+        );
       }
 
       load();

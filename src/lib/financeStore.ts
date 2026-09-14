@@ -259,6 +259,95 @@ export async function setPayment(
   return saved ? rowToPayment(saved) : null;
 }
 
+
+export async function setPayments(
+  locals: App.Locals,
+  input: {
+    playerId: string;
+    months: string[];
+    paid: boolean;
+    note?: string;
+  },
+): Promise<PaymentRecord[]> {
+  const db = getDB(locals);
+  const playerId = String(input.playerId || '').trim();
+
+  const months = Array.from(
+    new Set(
+      (input.months || [])
+        .map((month) => String(month || '').trim())
+        .filter((month) => /^\d{4}-\d{2}$/.test(month)),
+    ),
+  );
+
+  if (!playerId || !months.length) {
+    throw new Error('Pemain dan minimal satu periode pembayaran wajib diisi.');
+  }
+
+  if (months.includes('initial')) {
+    throw new Error('Pembayaran awal dicatat terpisah dari pembayaran SPP bulanan.');
+  }
+
+  const config = await getFinanceConfig(locals);
+
+  if (!input.paid) {
+    const statements = months.map((month) =>
+      db
+        .prepare(`
+          DELETE FROM payments
+          WHERE player_id = ? AND month = ?
+        `)
+        .bind(playerId, month),
+    );
+
+    await db.batch(statements);
+    return [];
+  }
+
+  const now = new Date().toISOString();
+  const amount = config.monthlyTuition;
+
+  const statements = months.map((month) => {
+    const id = crypto.randomUUID();
+
+    return db
+      .prepare(`
+        INSERT INTO payments (
+          id, player_id, month, amount, status, paid_at, note
+        )
+        VALUES (?, ?, ?, ?, 'paid', ?, ?)
+        ON CONFLICT(player_id, month) DO UPDATE SET
+          amount = excluded.amount,
+          status = 'paid',
+          paid_at = excluded.paid_at,
+          note = excluded.note
+      `)
+      .bind(
+        id,
+        playerId,
+        month,
+        amount,
+        now,
+        String(input.note || ''),
+      );
+  });
+
+  await db.batch(statements);
+
+  const result = await db
+    .prepare(`
+      SELECT id, player_id, month, amount, status, paid_at, note
+      FROM payments
+      WHERE player_id = ?
+        AND month IN (${months.map(() => '?').join(', ')})
+      ORDER BY month ASC
+    `)
+    .bind(playerId, ...months)
+    .all();
+
+  return result.results.map(rowToPayment);
+}
+
 export async function getPlayerFinance(
   locals: App.Locals,
   playerId: string,
