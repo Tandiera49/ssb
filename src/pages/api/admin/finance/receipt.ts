@@ -12,7 +12,10 @@ export const GET: APIRoute = async ({ request, url, locals }) => {
   const playerId = String(url.searchParams.get('playerId') || '').trim();
   const month = String(url.searchParams.get('month') || '').trim();
   if (!playerId || !month) return new Response('Parameter invoice tidak lengkap.', { status: 400 });
-  const registration = (await listRegistrations(locals)).find((item: any) => item.nomor_pendaftaran === playerId && item.status === 'diterima');
+  const registration = (await listRegistrations(locals)).find((item: any) =>
+    item.registration_number === playerId &&
+    ['diterima', 'accepted'].includes(String(item.status || '').toLowerCase())
+  );
   if (!registration) return new Response('Peserta tidak ditemukan.', { status: 404 });
   const finance = await getPlayerFinance(locals, playerId);
   const invoice = finance.invoices.find((item: any) => item.month === month);
