@@ -219,8 +219,13 @@ if (!user || user.role !== 'admin') {
 
     $('rows').innerHTML = visible.length ? visible.map(r => {
       const i = activeInvoice(r);
-      const unpaidMonths = r.finance.invoices.filter(x => x.month !== 'initial' && x.status !== 'paid');
 
+      // Ambil seluruh bulan selain tagihan awal yang belum lunas
+      const unpaidMonths = r.finance.invoices.filter(
+  x => x.month !== 'initial' && ['unpaid', 'overdue', 'upcoming'].includes(x.status)
+);
+
+      // 1. Checklist SPP
       const paymentChecks = unpaidMonths.length ? `
         <div class="payment-checks">
           <div class="payment-check-title">Pilih bulan SPP yang dibayar</div>
@@ -233,26 +238,36 @@ if (!user || user.role !== 'admin') {
         </div>
       ` : '';
 
-      const monthlyPaymentButton = unpaidMonths.length ? `
-        <button class="row-action action-btn" data-player="${esc(r.playerId)}" data-month="${esc(unpaidMonths[0].month)}" data-paid="false">
-          Catat pembayaran
-        </button>
-      ` : '';
+      // 2. Tombol Catat Pembayaran
+      let submitButton = '';
+      if (i.month === 'initial' && i.status !== 'paid') {
+        submitButton = `
+          <button class="row-action action-btn payment-submit" data-player="${esc(r.playerId)}" data-month="initial" data-paid="false">
+            Catat pembayaran
+          </button>
+        `;
+      } else if (unpaidMonths.length > 0) {
+        submitButton = `
+          <button class="row-action action-btn payment-submit" data-player="${esc(r.playerId)}" data-month="${esc(unpaidMonths[0].month)}" data-paid="false">
+            Catat pembayaran
+          </button>
+        `;
+      }
 
-      const initialPaymentButton = i.month === 'initial' && i.status !== 'paid' ? `
-        <button class="row-action action-btn" data-player="${esc(r.playerId)}" data-month="initial" data-paid="false">
-          Catat pembayaran
-        </button>
-      ` : '';
-
+      // 3. Tombol Batalkan dan Download PDF (Muncul jika tagihan utama lunas)
       const cancelButton = i.status === 'paid' ? `
         <button class="row-action action-btn" data-player="${esc(r.playerId)}" data-month="${esc(i.month)}" data-paid="true">
           Batalkan
         </button>
       ` : '';
 
+      const pdfLink = i.status === 'paid' ? `
+        <a class="receipt" href="/api/admin/finance/receipt?playerId=${encodeURIComponent(r.playerId)}&month=${encodeURIComponent(i.month)}">PDF</a>
+      ` : '';
+
       const statusText = i.status === 'paid' ? 'Lunas' : i.status === 'overdue' ? 'Tunggakan' : i.status === 'unpaid' ? 'Belum lunas' : 'Akan datang';
 
+      // 4. Render Row
       return `
         <tr>
           <td>
@@ -275,12 +290,14 @@ if (!user || user.role !== 'admin') {
           </td>
           <td>
             <div class="payment-actions">
-              ${i.month === 'initial' ? initialPaymentButton : paymentChecks}
-              ${i.month !== 'initial' && monthlyPaymentButton ? monthlyPaymentButton : ''}
-              <div class="payment-links">
-                ${cancelButton}
-                ${i.status === 'paid' ? `<a class="receipt" href="/api/admin/finance/receipt?playerId=${encodeURIComponent(r.playerId)}&month=${encodeURIComponent(i.month)}">PDF</a>` : ''}
-              </div>
+              ${paymentChecks}
+              ${submitButton}
+              ${(cancelButton || pdfLink) ? `
+                <div class="payment-links">
+                  ${cancelButton}
+                  ${pdfLink}
+                </div>
+              ` : ''}
             </div>
           </td>
         </tr>
@@ -469,7 +486,7 @@ if (!user || user.role !== 'admin') {
   table { width: 100%; border-collapse: collapse; min-width: 700px; }
   th, td { padding: 15px 8px; text-align: left; border-bottom: 1px solid #e7eee9; }
   th { color: #819189; font-size: 10px; letter-spacing: .11em; }
-  td { font-size: 13px; overflow: hidden; }
+  td { font-size: 13px; overflow: hidden; vertical-align: top; }
   td small { display: block; margin-top: 5px; color: #8d9d95; font-size: 11px; }
 
   .person { display: flex; align-items: center; gap: 10px; }
@@ -488,12 +505,15 @@ if (!user || user.role !== 'admin') {
   .payment-checks label:hover { border-color: #bfd5c7; background: #f3f8f4; }
   .payment-checks input { margin: 0; accent-color: #286247; }
 
-  .payment-actions { display: flex; flex-direction: column; align-items: stretch; gap: 7px; min-width: 170px; }
-  .payment-actions .payment-checks { width: 100%; margin: 0; }
+  .payment-actions { display: flex !important; flex-direction: column !important; align-items: stretch; gap: 10px; min-width: 170px; width: 100% !important; }
 
   .row-action { padding: 8px 10px; border: 1px solid #bfd5c7; border-radius: 7px; background: #fff; color: #286247; font-size: 11px; font-weight: 900; cursor: pointer; width: 100%; box-sizing: border-box; min-height: 38px; }
   .row-action:hover { border-color: #dcae24; }
   .row-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* TOMBOL KHUSUS CATAT PEMBAYARAN */
+  .payment-submit { background: #083c29 !important; color: #ffd866 !important; border: 1px solid #083c29 !important; font-weight: 900; padding: 12px; border-radius: 8px; text-align: center; }
+  .payment-submit:hover { background: #0d5239 !important; border-color: #0d5239 !important; color: #fff !important; }
 
   .payment-links { display: flex; align-items: center; gap: 7px; width: 100%; }
   .payment-links .row-action { flex: 1; }
@@ -540,8 +560,7 @@ if (!user || user.role !== 'admin') {
     .filters input, .filters select, .settings-panel input, .settings-panel button { width: 100%; box-sizing: border-box; }
 
     .invoice-panel tbody td:nth-child(5) { display: block; width: 100%; }
-    .payment-actions, .payment-links { width: 100%; min-width: 0; }
-    .invoice-panel tbody td:nth-child(5) .payment-checks { flex: 1 0 100%; }
+    .payment-links { width: 100%; min-width: 0; }
   }
 
   /* RESPONSIVE MOBILE - CLEAN INVOICE CARDS (500px) */
@@ -573,10 +592,9 @@ if (!user || user.role !== 'admin') {
     .invoice-panel tbody td:nth-child(4)::before { content: "Status"; flex: 0 0 auto; color: #8d9d95; font-size: 10px; font-weight: 800; }
 
     .invoice-panel tbody td:nth-child(5) { display: flex !important; gap: 8px; margin-top: 10px; }
-    .invoice-panel tbody td:nth-child(5) .row-action { flex: 1 1 auto; min-height: 44px; white-space: normal; }
-    .invoice-panel tbody td:nth-child(5) .receipt { flex: 0 0 54px; width: 54px; min-height: 44px; }
-    .invoice-panel .status { max-width: 70%; }
+    .payment-links { display: flex; gap: 8px; width: 100%; }
 
+    .invoice-panel .status { max-width: 70%; }
     .pagination { padding-top: 16px; gap: 5px; }
     .page-btn { min-width: 32px; height: 32px; }
   }
