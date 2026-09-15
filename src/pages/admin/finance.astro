@@ -95,22 +95,58 @@ function draw(){
         x=>x.month!=='initial'&&x.status!=='paid'
       );
 
-      const paymentChecks=i.status!=='paid'&&unpaidMonths.length
+      const paymentChecks=unpaidMonths.length
         ?`
           <div class="payment-checks">
-            <div class="payment-check-title">Pilih bulan yang dibayar</div>
-            ${unpaidMonths.map(x=>`
+            <div class="payment-check-title">Pilih bulan SPP yang dibayar</div>
+            ${unpaidMonths.map((x,index)=>`
               <label>
                 <input
                   type="checkbox"
                   class="payment-month"
                   value="${esc(x.month)}"
-                  ${x.month===i.month?'checked':''}
+                  ${index===0?'checked':''}
                 >
                 <span>${esc(x.label)}</span>
               </label>
             `).join('')}
           </div>
+        `
+        :'';
+
+      const monthlyPaymentButton=unpaidMonths.length
+        ?`
+          <button
+            class="row-action payment-submit"
+            data-player="${esc(r.playerId)}"
+            data-month="${esc(unpaidMonths[0].month)}"
+            data-paid="false">
+            Catat pembayaran
+          </button>
+        `
+        :'';
+
+      const initialPaymentButton=i.month==='initial'&&i.status!=='paid'
+        ?`
+          <button
+            class="row-action payment-submit"
+            data-player="${esc(r.playerId)}"
+            data-month="initial"
+            data-paid="false">
+            Catat pembayaran
+          </button>
+        `
+        :'';
+
+      const cancelButton=i.status==='paid'
+        ?`
+          <button
+            class="row-action"
+            data-player="${esc(r.playerId)}"
+            data-month="${esc(i.month)}"
+            data-paid="true">
+            Batalkan
+          </button>
         `
         :'';
 
@@ -144,15 +180,15 @@ function draw(){
         </td>
 
         <td>
-          ${paymentChecks}
+          ${i.month==='initial'
+            ?initialPaymentButton
+            :paymentChecks}
 
-          <button
-            class="row-action"
-            data-player="${esc(r.playerId)}"
-            data-month="${esc(i.month)}"
-            data-paid="${i.status==='paid'?'true':'false'}">
-            ${i.status==='paid'?'Batalkan':'Catat pembayaran'}
-          </button>
+          ${i.month!=='initial'&&monthlyPaymentButton
+            ?monthlyPaymentButton
+            :''}
+
+          ${cancelButton}
 
           ${i.status==='paid'
             ?`<a class="receipt" href="/api/admin/finance/receipt?playerId=${encodeURIComponent(r.playerId)}&month=${encodeURIComponent(i.month)}">PDF</a>`
@@ -164,7 +200,7 @@ function draw(){
 
   renderPagination(list.length);
 
-  document.querySelectorAll('[data-player]').forEach(b=>{
+  document.querySelectorAll('.payment-submit').forEach(b=>{
     b.onclick=async()=>{
       b.disabled=true;
 
@@ -182,13 +218,28 @@ function draw(){
         }
       }
 
-      const months=paid
-        ?[b.dataset.month]
-        :[...cell.querySelectorAll('.payment-month:checked')]
-          .map(input=>input.value);
+      let months=[b.dataset.month];
 
-      if(!months.length){
-        show('Pilih minimal satu bulan SPP.',true);
+      if(!paid&&b.dataset.month!=='initial'){
+        months=[...cell.querySelectorAll('.payment-month:checked')]
+          .map(input=>input.value)
+          .filter(Boolean);
+
+        months=Array.from(new Set(months));
+
+        if(!months.length){
+          show('Pilih minimal satu bulan SPP.',true);
+          b.disabled=false;
+          return;
+        }
+      }
+
+      const note=prompt(
+        'Catatan pembayaran (opsional):',
+        'Pembayaran diterima Admin'
+      );
+
+      if(note===null){
         b.disabled=false;
         return;
       }
@@ -203,7 +254,7 @@ function draw(){
             month:months[0],
             months,
             paid,
-            note:'Pembayaran diterima Admin'
+            note
           })
         });
 
@@ -249,6 +300,7 @@ load();
   display:grid;
   gap:5px;
   margin-bottom:8px;
+  width:100%;
 }
 
 .payment-check-title{
@@ -281,6 +333,16 @@ load();
 .payment-checks input{
   margin:0;
   accent-color:#286247;
+}
+
+@media(max-width:800px){
+  .invoice-panel tbody td:nth-child(5){
+    flex-wrap:wrap;
+  }
+
+  .invoice-panel tbody td:nth-child(5) .payment-checks{
+    flex:1 0 100%;
+  }
 }
 
 .row-action{padding:8px 10px;border:1px solid #bfd5c7;border-radius:7px;background:#fff;color:#286247;font-size:11px;font-weight:900;cursor:pointer}.row-action:hover{border-color:#dcae24}.settings-panel{padding:25px}.settings-panel p{color:#819189;line-height:1.6;font-size:12px}.settings-panel form{display:grid;gap:12px}.settings-panel label{display:grid;gap:6px;color:#62766b;font-size:11px;font-weight:900}.config-total{display:flex;justify-content:space-between;margin:5px 0;padding-top:15px;border-top:1px solid #e4ece7;color:#71857a;font-size:12px}.config-total strong{color:#123c29;font-size:15px}.save{padding:12px;border:0;border-radius:8px;background:#dcae24;color:#192a1e;font-weight:900;cursor:pointer}.finance-rule{margin-top:22px;padding:13px;border-radius:9px;background:#f1f6f2}.finance-rule b{font-size:11px}.finance-rule p{margin:5px 0 0;font-size:11px}.empty{padding:35px;text-align:center;color:#8a9a92}@media(max-width:1100px){.finance-summary{grid-template-columns:repeat(2,1fr)}.finance-layout{grid-template-columns:1fr}}@media(max-width:800px){.finance{margin-left:0;padding:86px 18px 50px}.page-header{display:block}.ghost{margin-top:18px}.panel-top{display:block}.filters{margin-bottom:16px}.filters input{flex:1}.filters select{flex:1}}@media(max-width:500px){.finance-summary{grid-template-columns:1fr}.page-header h1{font-size:44px}.filters{display:grid;grid-template-columns:1fr}}
