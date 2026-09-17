@@ -307,12 +307,13 @@ if (!user || user.role !== 'admin') {
       b.onclick = async (e) => {
         e.preventDefault();
         b.disabled = true;
-        const paid = b.dataset.paid === 'true';
+        const isCancellation = b.dataset.paid === 'true';
+        const paid = !isCancellation;
         
         // Cari kontainer .payment-actions terdekat
         const actionContainer = b.closest('.payment-actions');
 
-        if (paid) {
+        if (isCancellation) {
           const confirmed = confirm(`Batalkan pembayaran ${b.dataset.month}?`);
           if (!confirmed) {
             b.disabled = false;
@@ -321,7 +322,7 @@ if (!user || user.role !== 'admin') {
         }
 
         let months = [b.dataset.month];
-        if (!paid && b.dataset.month !== 'initial') {
+        if (paid && b.dataset.month !== 'initial') {
           if (actionContainer) {
             months = [...actionContainer.querySelectorAll('.payment-month:checked')]
               .map(input => input.value)
@@ -369,7 +370,7 @@ if (!user || user.role !== 'admin') {
           }
 
           const total = Number(d.total || 0);
-          show(paid ? 'Pembayaran dibatalkan.' : `${months.length} bulan berhasil dicatat. Total pemasukan ${money(total)}.`);
+          show(isCancellation ? 'Pembayaran dibatalkan.' : `${months.length} bulan berhasil dicatat. Total pemasukan ${money(total)}.`);
           await load();
         } catch (err) {
           show('Gagal terhubung ke server backend.', true);
